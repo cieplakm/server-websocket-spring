@@ -1,16 +1,16 @@
-package com.gft.challenge1.server;
+package com.gft.challenge1.server.calendar;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.chrono.ChronoLocalDate;
 import java.util.Iterator;
 
-public class MeetingCalendar implements Iterable<LocalDate>{
+
+public class MyFirstMeetingMeetingCalendar implements MeetingCalendar {
     private LocalDate initialDate;
     private DayOfWeek[] meetingDays;
 
-    public MeetingCalendar(int startYear, int startMonth, int startDay) {
-        initialDate = LocalDate.of(startYear,startMonth,startDay);
+    public MyFirstMeetingMeetingCalendar(LocalDate startDate) {
+        initialDate = startDate;
     }
 
     @Override
@@ -21,7 +21,6 @@ public class MeetingCalendar implements Iterable<LocalDate>{
     public void setMeetingDays(DayOfWeek[] meetingDays) {
         this.meetingDays = meetingDays;
     }
-
 
     class LocalDateIterator implements Iterator<LocalDate>{
 
@@ -43,7 +42,7 @@ public class MeetingCalendar implements Iterable<LocalDate>{
 
         private boolean isMeetingDay(LocalDate date){
             DayOfWeek dayOfWeek = date.getDayOfWeek();
-            //meetings are in Tuesday and Friday
+            //meetings are in Tuesday and Friday or days from meetingDays
             if ( meetingDays != null ){
 
                 for (DayOfWeek dow : meetingDays){
