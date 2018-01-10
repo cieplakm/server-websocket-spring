@@ -12,7 +12,7 @@ import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.*;
 
-public class MyFirstMeetingCalendarTest {
+public class MeetingCalendarTill2100Tests {
 
     @Test
     public void testIfMeetingDaysIsTuesdayOrFriday(){
