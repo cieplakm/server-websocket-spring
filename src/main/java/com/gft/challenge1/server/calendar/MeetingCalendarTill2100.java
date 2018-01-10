@@ -5,11 +5,11 @@ import java.time.LocalDate;
 import java.util.Iterator;
 
 
-public class MyFirstMeetingMeetingCalendar implements MeetingCalendar {
+public class MeetingCalendarTill2100 implements MeetingCalendar {
     private LocalDate initialDate;
     private DayOfWeek[] meetingDays;
 
-    public MyFirstMeetingMeetingCalendar(LocalDate startDate) {
+    public MeetingCalendarTill2100(LocalDate startDate) {
         initialDate = startDate;
     }
 
@@ -32,7 +32,8 @@ public class MyFirstMeetingMeetingCalendar implements MeetingCalendar {
 
         @Override
         public boolean hasNext() {
-            return iterate.isBefore(LocalDate.of(2100,1,1));//always will be Tuesday and Friday but prevent infinity looping - date before 1.1.2100
+            //always will be Tuesday and Friday but prevent infinity looping - date before 1.1.2100
+            return iterate.isBefore(LocalDate.of(2100,1,1));
         }
 
         @Override
