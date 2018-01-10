@@ -33,7 +33,7 @@ public class MeetingCalendarTill2100 implements MeetingCalendar {
         @Override
         public boolean hasNext() {
             //always will be Tuesday and Friday but prevent infinity looping - date before 1.1.2100
-            return iterate.isBefore(LocalDate.of(2100,1,1));
+            return iterate.isBefore(LocalDate.of(2099,12,31));
         }
 
         @Override
