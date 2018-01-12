@@ -10,23 +10,28 @@ public class NodeImpl<T> implements Node<T> {
     private Node<T> parent;
     private List<Node<T>> children;
 
-    /** Constructor for root NodeImpl */
+    /** Constructor for root Node */
     public NodeImpl() {
         this(null);
     }
 
-    /** Null @param means it is root */
+    /** Null
+     * @param parent means it is root.
+     * Parent Node cannot be child iteslf.
+     * */
     public NodeImpl(Node<T> parent) {
         children = new ArrayList<>();
         this.parent = parent;
 
-        if (parent != null){
-            try {
-                parent.addChild(this);
-            } catch (ParentAsChildException e) {
-                e.printStackTrace();
-            }
+        try {
+            if (parent != null) addChildToParent();
+        } catch (ParentAsChildException e) {
+            //nothing to do because here (in constructor) this is save
         }
+    }
+
+    private void addChildToParent() throws ParentAsChildException {
+        parent.addChild(this);
     }
 
     @Override

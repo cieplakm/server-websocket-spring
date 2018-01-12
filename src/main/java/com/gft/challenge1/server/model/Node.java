@@ -2,7 +2,7 @@ package com.gft.challenge1.server.model;
 
 public interface Node<T> extends Iterable<Node>{
 
-    void addChild(Node<T> child) throws ParentAsChildException;
+    void addChild(Node<T> child) throws ParentAsChildException, MeMyParentException;
 
     void removeChild(Node<T> child);
 

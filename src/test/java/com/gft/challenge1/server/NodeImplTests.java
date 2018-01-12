@@ -82,9 +82,11 @@ public class NodeImplTests {
     }
 
     @Test
-    public void shouldBeChildOfParent(){
+    public void shouldBeChildOfParent() throws ParentAsChildException {
         Node<String> root = new NodeImpl<>();
         Node<Integer> child = new NodeImpl(root);
+        child.addChild(child);
+
         Node<Boolean> tallChild = new NodeImpl(root);
 
         assertThat(root).contains(child);
@@ -109,6 +111,7 @@ public class NodeImplTests {
 
         fail("No exception, but should be!");
     }
+
 
     @Test
     public void shouldDataNotBeNull(){
