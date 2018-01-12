@@ -1,5 +1,8 @@
 package com.gft.challenge1.server.calendar;
 
+
+import lombok.NonNull;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Iterator;
@@ -9,7 +12,7 @@ public class MeetingCalendarTill2100 implements MeetingCalendar {
     private LocalDate initialDate;
     private DayOfWeek[] meetingDays;
 
-    public MeetingCalendarTill2100(LocalDate startDate) {
+    public MeetingCalendarTill2100(@NonNull LocalDate startDate) {
         initialDate = startDate;
     }
 
@@ -22,18 +25,18 @@ public class MeetingCalendarTill2100 implements MeetingCalendar {
         this.meetingDays = meetingDays;
     }
 
-    class LocalDateIterator implements Iterator<LocalDate>{
+    private class LocalDateIterator implements Iterator<LocalDate>{
 
         private LocalDate iterate;
 
-        LocalDateIterator(LocalDate initialDate ) {
+        LocalDateIterator(LocalDate initialDate) {
             this.iterate = initialDate;
         }
 
         @Override
         public boolean hasNext() {
-            //always will be Tuesday and Friday but prevent infinity looping - date before 1.1.2100
-            return iterate.isBefore(LocalDate.of(2099,12,31));
+            //always will be Tuesday and Friday
+            return true;
         }
 
         @Override
