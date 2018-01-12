@@ -4,30 +4,35 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/** This class is ..... */
+/** This class is data tree */
 public class NodeImpl<T> implements Node<T> {
     private T data;
     private Node<T> parent;
     private List<Node<T>> children;
-
-
-    /** @param parent can be null and it's mean it is root NodeImpl */
-    public NodeImpl(Node<T> parent) {
-        children = new ArrayList<>();
-        this.parent = parent;
-
-        if (parent!=null){
-            parent.addChild(this);
-        }
-    }
 
     /** Constructor for root NodeImpl */
     public NodeImpl() {
         this(null);
     }
 
+    /** Null @param means it is root */
+    public NodeImpl(Node<T> parent) {
+        children = new ArrayList<>();
+        this.parent = parent;
+
+        if (parent != null){
+            try {
+                parent.addChild(this);
+            } catch (ParentAsChildException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     @Override
-    public void addChild(Node<T> child) {
+    public void addChild(Node<T> child) throws ParentAsChildException {
+        if (child == parent) throw new  ParentAsChildException();
+
         children.add(child);
 
         NodeImpl<T> impl = (NodeImpl<T>)child;
@@ -56,6 +61,16 @@ public class NodeImpl<T> implements Node<T> {
     }
 
     @Override
+    public void setData(T data) {
+        this.data = data;
+    }
+
+    @Override
+    public T getData() {
+        return data;
+    }
+
+    @Override
     public boolean isRoot(){
         return parent == null;
     }
@@ -66,32 +81,13 @@ public class NodeImpl<T> implements Node<T> {
     }
 
     @Override
-    public Iterator<Node<T>> iterator() {
-        return new NodeInterator(children);
-//       return new Iterator<Node<T>>() {
-//           int pointer = 0;
-//           @Override
-//           public boolean hasNext() {
-//               return pointer < children.size();
-//           }
-//
-//           @Override
-//           public Node<T> next() {
-//               Node<T> node = children.get(pointer);
-//               pointer++;
-//               return node;
-//           }
-//       };
+    public Iterator<Node> iterator() {
+        return new NodeInterator();
     }
 
-
-    class NodeInterator implements Iterator<Node<T>> {
+    /**Iterator thought children*/
+    class NodeInterator implements Iterator<Node> {
         int pointer = 0;
-        List<Node<T>> children;
-
-        public NodeInterator(List<Node<T>> children) {
-            this.children = children;
-        }
 
         @Override
         public boolean hasNext() {
@@ -99,11 +95,12 @@ public class NodeImpl<T> implements Node<T> {
         }
 
         @Override
-        public Node<T> next() {
-            Node<T> node = children.get(pointer);
+        public Node next() {
+            Node node = children.get(pointer);
             pointer++;
             return node;
         }
 
     }
+
 }

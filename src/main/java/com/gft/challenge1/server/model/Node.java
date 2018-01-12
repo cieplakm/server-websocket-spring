@@ -1,8 +1,8 @@
 package com.gft.challenge1.server.model;
 
-public interface Node<T> extends Iterable<Node<T>>{
+public interface Node<T> extends Iterable<Node>{
 
-    void addChild(Node<T> child);
+    void addChild(Node<T> child) throws ParentAsChildException;
 
     void removeChild(Node<T> child);
 
@@ -11,5 +11,9 @@ public interface Node<T> extends Iterable<Node<T>>{
     boolean hasChildren();
 
     Node<T> getParent();
+    
+    void setData(T data);
+
+    T getData();
 
 }
