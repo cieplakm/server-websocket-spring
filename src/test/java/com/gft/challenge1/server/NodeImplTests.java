@@ -1,8 +1,16 @@
 package com.gft.challenge1.server;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gft.challenge1.server.model.Node;
 import com.gft.challenge1.server.model.NodeImpl;
 import com.gft.challenge1.server.model.ParentAsChildException;
+import com.google.gson.Gson;
 import org.junit.Test;
+
+import org.springframework.boot.json.GsonJsonParser;
+import org.springframework.boot.test.json.GsonTester;
+
+import java.io.File;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -121,5 +129,32 @@ public class NodeImplTests {
         assertThat(parent.getData()).isNotNull();
     }
 
-    
+
+    @Test
+    public void run(){
+        NodeImpl<String> parent = new NodeImpl<>();
+
+        Node<String> child1 = new NodeImpl<>(parent);
+        Node<String> child2 = new NodeImpl<>(parent);
+        Node<String> child3 = new NodeImpl<>(parent);
+
+        Node<String> parent2 = new NodeImpl<>();
+        Node<String> child4 = new NodeImpl<>(parent2);
+        Node<String> child5 = new NodeImpl<>(parent2);
+
+        try {
+            parent.addChild(parent2);
+        } catch (ParentAsChildException e) {
+            e.printStackTrace();
+        }
+
+        //parent.removeChild(parent2);
+        Gson gson = new Gson();
+        gson.toJson(parent);
+
+
+
+    }
+
+
 }

@@ -28,6 +28,7 @@ public class NodeImpl<T> implements Node<T> {
         } catch (ParentAsChildException e) {
             //nothing to do because here (in constructor) this is save
         }
+
     }
 
     private void addChildToParent() throws ParentAsChildException {
