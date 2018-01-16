@@ -1,4 +1,4 @@
-package com.gft.challenge1.server.model;
+package com.gft.challenge1.server.node;
 
 public class ParentAsChildException extends Exception {
     public ParentAsChildException() {

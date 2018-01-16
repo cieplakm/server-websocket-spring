@@ -1,160 +1,82 @@
 package com.gft.challenge1.server;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gft.challenge1.server.model.Node;
-import com.gft.challenge1.server.model.NodeImpl;
-import com.gft.challenge1.server.model.ParentAsChildException;
-import com.google.gson.Gson;
+
+import lombok.SneakyThrows;
+import lombok.val;
 import org.junit.Test;
-
-import org.springframework.boot.json.GsonJsonParser;
-import org.springframework.boot.test.json.GsonTester;
-
-import java.io.File;
-
 import static org.assertj.core.api.Assertions.*;
+
+import com.gft.challenge1.server.node.Node;
+import com.gft.challenge1.server.node.NodeImpl;
+import com.gft.challenge1.server.node.ParentAsChildException;
+
+import java.util.Iterator;
+
 
 public class NodeImplTests {
 
     @Test
-    public void shouldBeRootNode(){
-        NodeImpl root = new NodeImpl(null);
-        assertThat(root.isRoot()).isEqualTo(true);
+    public void shouldConvertTreeToNodeIteratorAndNotContainsRootNode(){
 
-        NodeImpl root2 = new NodeImpl();
+        val root = new NodeImpl();
 
-        assertThat(root2.isRoot()).isEqualTo(true);
-    }
+        val child1 = new NodeImpl(root, "child1");
+        val child2 = new NodeImpl(root, "child2");
+        val child3 = new NodeImpl(root, "child3");
+        val child4 = new NodeImpl(root, "child4");
 
-    @Test
-    public void shouldNotBeRootNode(){
-        NodeImpl root = new NodeImpl();
-        NodeImpl nodeImpl = new NodeImpl(root);
+        val child11 = new NodeImpl(child1, "child11");
+        val child12 = new NodeImpl(child1, "child12");
+        val child13 = new NodeImpl(child1, "child13");
 
-        assertThat(nodeImpl.isRoot()).isEqualTo(false);
-    }
+        val child31 = new NodeImpl(child3, "child31");
+        val child32 = new NodeImpl(child3, "child32");
 
-    @Test
-    public void shouldNotHaveChildren(){
-        NodeImpl root = new NodeImpl();
-        NodeImpl nodeImpl = new NodeImpl(root);
+        val child41 = new NodeImpl(child4, "child41");
 
-        assertThat(nodeImpl.hasChildren()).isEqualTo(false);
-    }
 
-    @Test
-    public void shouldHaveChildren(){
-        NodeImpl root = new NodeImpl();
-        NodeImpl nodeImpl = new NodeImpl(root);
+//        for ( Object o : root ){
+//            System.out.println( "Node item: " + ( (NodeImpl) o).name );
+//        }
 
-        assertThat(root.hasChildren()).isEqualTo(true);
-    }
+        assertThat(root.convertToIterator())
+                .containsOnlyOnce(child1.getPayload(),
+                        child2.getPayload(),
+                        child3.getPayload(),
+                        child4.getPayload(),
+                        child11.getPayload(),
+                        child12.getPayload(),
+                        child13.getPayload(),
+                        child31.getPayload(),
+                        child32.getPayload(),
+                        child41.getPayload()
+                );
 
-    @Test
-    public void shoulRemoveChildFromChildren(){
-        NodeImpl root = new NodeImpl();
-        NodeImpl nodeImpl = new NodeImpl(root);
-        root.removeChild(nodeImpl);
+        assertThat(root.convertToIterator())
+                .doesNotContain(root.getPayload());
 
-        assertThat(root.hasChildren()).isEqualTo(false);
-    }
+        assertThat(child1.convertToIterator())
+                .containsOnlyOnce(
+                child11.getPayload(),
+                        child12.getPayload(),
+                        child13.getPayload() );
 
-    @Test
-    public void shoulBeRootAfterRemoveFromRootsChildren(){
-        NodeImpl root = new NodeImpl();
-        NodeImpl nodeImpl = new NodeImpl(root);
-        root.removeChild(nodeImpl);
+        assertThat(child1.convertToIterator())
+                .doesNotContain(root.getPayload(),
+                        child1.getPayload(),
+                        child2.getPayload(),
+                        child3.getPayload(),
+                        child4.getPayload(),
+                        child31.getPayload(),
+                        child32.getPayload(),
+                        child41.getPayload()
+                );
 
-        assertThat(nodeImpl.isRoot()).isEqualTo(true);
-    }
-
-    @Test
-    public void shouldNotBeARootAfterAddToAnotherRoot(){
-        Node root = new NodeImpl();
-        Node anotherRoot = new NodeImpl();
-        try {
-            anotherRoot.addChild(root);
-        } catch (ParentAsChildException e) {
-            e.printStackTrace();
-        }
-
-        assertThat(root.isRoot()).isEqualTo(false);
-    }
-
-    @Test
-    public void shouldBeParentOfChild(){
-        Node root = new NodeImpl();
-        Node child = new NodeImpl(root);
-
-        assertThat(child.getParent().equals(root)).isEqualTo(true);
-    }
-
-    @Test
-    public void shouldBeChildOfParent() throws ParentAsChildException {
-        Node<String> root = new NodeImpl<>();
-        Node<Integer> child = new NodeImpl(root);
-        child.addChild(child);
-
-        Node<Boolean> tallChild = new NodeImpl(root);
-
-        assertThat(root).contains(child);
-
-        for (Node node : root){
-            System.out.println("node: " + node);
-        }
+        assertThat(child11.convertToIterator())
+                .isEmpty();
 
     }
 
-    @Test
-    public void shouldNotParentBeChildsChild(){
-        Node<String> parent = new NodeImpl<>();
-        Node<String> child = new NodeImpl<>(parent);
 
-        try {
-            child.addChild(parent);
-        } catch (ParentAsChildException e) {
-            assertThat(e).isInstanceOf(ParentAsChildException.class);
-            return;
-        }
-
-        fail("No exception, but should be!");
-    }
-
-
-    @Test
-    public void shouldDataNotBeNull(){
-        Node<Object> parent = new NodeImpl<>();
-        parent.setData(new Object());
-
-        assertThat(parent.getData()).isNotNull();
-    }
-
-
-    @Test
-    public void run(){
-        NodeImpl<String> parent = new NodeImpl<>();
-
-        Node<String> child1 = new NodeImpl<>(parent);
-        Node<String> child2 = new NodeImpl<>(parent);
-        Node<String> child3 = new NodeImpl<>(parent);
-
-        Node<String> parent2 = new NodeImpl<>();
-        Node<String> child4 = new NodeImpl<>(parent2);
-        Node<String> child5 = new NodeImpl<>(parent2);
-
-        try {
-            parent.addChild(parent2);
-        } catch (ParentAsChildException e) {
-            e.printStackTrace();
-        }
-
-        //parent.removeChild(parent2);
-        Gson gson = new Gson();
-        gson.toJson(parent);
-
-
-
-    }
 
 
 }
