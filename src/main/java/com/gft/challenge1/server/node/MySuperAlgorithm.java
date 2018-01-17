@@ -5,28 +5,26 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 
-/** Assumptions: Node iterate through his children.
+/** Assumptions: Node iterator iterate through his children.
+ * Algorithm iterate BFS method.
+ *
  * */
 public class MySuperAlgorithm  {
-    public Iterator convert2Iterator(Node node){
+    public static Iterator<Node> convert2Iterator(Node node){
         return new SuperIterator(node);
-
     }
 
-    class SuperIterator implements Iterator {
-        private final Node rootNode;
+    static class SuperIterator implements Iterator<Node> {
         private Node pointer;
-        private Queue queue;
-
         private Iterator pointerIterator;
+        private Queue<Node> queue;
 
-        public SuperIterator(Node node) {
-            rootNode = node;
-            pointer = rootNode;
-            queue = new LinkedList();
 
-            pointerIterator = rootNode.iterator();
+        private SuperIterator(Node node) {
+            pointer = node;
+            queue = new LinkedList<>();
 
+            pointerIterator = pointer.iterator();
         }
 
         @Override
@@ -58,14 +56,14 @@ public class MySuperAlgorithm  {
         }
 
         private void changePointerToFirstFromQueue() {
-            pointer = (Node) queue.remove();
+            pointer = queue.remove();
             setPointerIterator();
         }
 
         private void setPointerIterator() {
             pointerIterator = pointer.iterator();
         }
-        
+
     }
 
 

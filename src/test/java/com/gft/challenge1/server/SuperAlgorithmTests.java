@@ -9,7 +9,7 @@ import com.gft.challenge1.server.node.NodeImpl;
 
 import java.util.Iterator;
 
-public class NodeImplTests {
+public class SuperAlgorithmTests {
 
 //    @Test
 //    public void shouldConvertTreeToNodeIterator(){
@@ -24,26 +24,26 @@ public class NodeImplTests {
 //    }
 
     @Test
-    public void should(){
-        val root = new NodeImpl();
+    public void shouldIterateBFS(){
+        Node<String> root = new NodeImpl<>();
 
-        val child1 = new NodeImpl(root, "B-child1");
-        val child2 = new NodeImpl(root, "C-child2");
+        val child1 = new NodeImpl<>(root, "B-child1");
+        val child2 = new NodeImpl<>(root, "C-child2");
 
-        val child11 = new NodeImpl(child1, "D-child11");
-        val child21 = new NodeImpl(child1, "E-child21");
-        val child22 = new NodeImpl(child1, "F-child22");
+        val child11 = new NodeImpl<>(child1, "D-child11");
+        val child21 = new NodeImpl<>(child1, "E-child21");
+        val child22 = new NodeImpl<>(child1, "F-child22");
 
-        val child111 = new NodeImpl(child11, "G-child111");
-        val child112 = new NodeImpl(child11, "H-child112");
-        val child113 = new NodeImpl(child11, "I-child113");
-        val child221 = new NodeImpl(child21, "J-child211");
+        val child111 = new NodeImpl<>(child11, "G-child111");
+        val child112 = new NodeImpl<>(child11, "H-child112");
+        val child113 = new NodeImpl<>(child11, "I-child113");
+        val child221 = new NodeImpl<>(child21, "J-child211");
 
-        val child1111 = new NodeImpl(child111, "K-child1111");
-        val child1112 = new NodeImpl(child111, "L-child1112");
-        val child1131 = new NodeImpl(child113, "M-child1131");
+        val child1111 = new NodeImpl<>(child111, "K-child1111");
+        val child1112 = new NodeImpl<>(child111, "L-child1112");
+        val child1131 = new NodeImpl<>(child113, "M-child1131");
 
-        Iterator<Node> iter = new MySuperAlgorithm().convert2Iterator(root);
+        Iterator<Node> iter = MySuperAlgorithm.convert2Iterator(root);
 
         Node aChildB = iter.next();
         Node aChildC = iter.next();

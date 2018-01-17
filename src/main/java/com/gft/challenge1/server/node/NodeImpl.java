@@ -6,21 +6,21 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /** This class is data tree.  */
-public class NodeImpl implements Node<String> {
+public class NodeImpl<T> implements Node<T> {
     private Node parent;
     private List<Node> children;
-    private String payload;
+    private T payload;
 
 
     /** Constructor for root Node */
     public NodeImpl() {
-        this(null, "root");
+        this(null, (T) "root");
     }
 
     /** Null
      * @param parent means it is root.
      * */
-    public NodeImpl(Node parent, String data) {
+    public NodeImpl(Node parent, T data) {
         children = new ArrayList<>();
         this.parent = parent;
         payload = data;
@@ -41,7 +41,7 @@ public class NodeImpl implements Node<String> {
     }
 
     @Override
-    public String getPayload() {
+    public T getPayload() {
         return payload;
     }
 
