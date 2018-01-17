@@ -1,31 +1,29 @@
-package com.gft.challenge1.server.config;
+package com.gft.challenge1.server.websockets;
 
+import com.gft.challenge1.server.ServerObservers;
 import com.gft.challenge1.server.services.FilesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 
-import java.io.IOException;
 
 @Component
-public class Handler implements WebSocketHandler {
+public class MyWebSocketHandler implements WebSocketHandler {
 
     @Autowired
     FilesService filesService;
 
     private ServerObservers serverObservers;
-    private WebSocketSession webSocketSession;
+
 
     @Autowired
-    public Handler(ServerObservers serverObservers) {
+    public MyWebSocketHandler(ServerObservers serverObservers) {
         this.serverObservers = serverObservers;
     }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession webSocketSession) throws Exception {
-        this.webSocketSession = webSocketSession;
-        serverObservers.register(webSocketSession);
-        filesService.send();
+        serverObservers.register(new Client(webSocketSession));
     }
 
     @Override
@@ -38,6 +36,7 @@ public class Handler implements WebSocketHandler {
 
     }
 
+
     @Override
     public void afterConnectionClosed(WebSocketSession webSocketSession, CloseStatus closeStatus) throws Exception {
         serverObservers.unregister(webSocketSession);
@@ -48,11 +47,4 @@ public class Handler implements WebSocketHandler {
         return false;
     }
 
-    public void sendDataToClient(String json){
-        try {
-            webSocketSession.sendMessage(new TextMessage(json));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }
