@@ -7,12 +7,10 @@ import java.util.stream.Stream;
 
 /** This class is data tree.  */
 public class NodeImpl implements Node<String> {
-    
     private Node parent;
     private List<Node> children;
-    private String name;
     private String payload;
-    private ConvertingAlgorithm convertingAlgorithm;
+
 
     /** Constructor for root Node */
     public NodeImpl() {
@@ -22,16 +20,15 @@ public class NodeImpl implements Node<String> {
     /** Null
      * @param parent means it is root.
      * */
-    public NodeImpl(Node parent, String name) {
+    public NodeImpl(Node parent, String data) {
         children = new ArrayList<>();
         this.parent = parent;
-        this.name = name;
-        payload = name;
+        payload = data;
 
         if (parent != null)
             ((NodeImpl)parent).addChild(this);
 
-        convertingAlgorithm = new MySuperAlgorithm();
+
     }
 
     private void addChild(Node node) {
@@ -40,7 +37,7 @@ public class NodeImpl implements Node<String> {
 
     @Override
     public Iterator<Node> iterator() {
-        return new NodeInterator();
+        return new NodeIterator();
     }
 
     @Override
@@ -48,28 +45,13 @@ public class NodeImpl implements Node<String> {
         return payload;
     }
 
-    @Override
-    public Iterator<String> convertToIterator() {
-        return convertingAlgorithm.convert2Iterator(this);
-    }
-
-    @Override
-    public Stream convertToStream() {
-        return convertingAlgorithm.convert2Stream(this);
-    }
-
-    @Override
-    public ConvertingAlgorithm getConvertingAlgorithm() {
-        return convertingAlgorithm;
-    }
-
     /**Iterator convert2Iterator children*/
-    class NodeInterator implements Iterator<Node> {
+    class NodeIterator implements Iterator<Node> {
         int pointer = 0;
 
         @Override
         public boolean hasNext() {
-            return pointer < children.size();
+            return pointer < children.size() &&  !children.isEmpty();
         }
 
         @Override

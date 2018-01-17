@@ -1,39 +1,73 @@
 package com.gft.challenge1.server.node;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Stream;
+import java.util.LinkedList;
+import java.util.Queue;
 
-public class MySuperAlgorithm<E> implements Node.ConvertingAlgorithm<E> {
 
-    public List<E> convert2List(Node<String> node){
-        List<E> list = new ArrayList<>();
+/** Assumptions: Node iterate through his children.
+ * */
+public class MySuperAlgorithm  {
+    public Iterator convert2Iterator(Node node){
+        return new SuperIterator(node);
 
-        for (Object chid : node) {
-            Node childNode = (Node) chid;
+    }
 
-            if (childNode != null) {
-                list.add((E) childNode.getPayload());
-            }
+    class SuperIterator implements Iterator {
+        private final Node rootNode;
+        private Node pointer;
+        private Queue queue;
 
-            if (childNode.iterator().hasNext()){
-                List<E> list1 = convert2List(childNode);
-                list.addAll(list1);
+        private Iterator pointerIterator;
+
+        public SuperIterator(Node node) {
+            rootNode = node;
+            pointer = rootNode;
+            queue = new LinkedList();
+
+            pointerIterator = rootNode.iterator();
+
+        }
+
+        @Override
+        public boolean hasNext() {
+            return true;
+        }
+
+        @Override
+        public Node next() {
+            return giveMeNextNode();
+        }
+
+        private Node giveMeNextNode(){
+            if (pointerIterator.hasNext()){
+
+                Node node = (Node) pointerIterator.next();
+                addNodeToQueue(node);
+
+                return node;
+            }else {
+                changePointerToFirstFromQueue();
+
+                return giveMeNextNode();
             }
         }
 
-        return list;
+        private void addNodeToQueue(Node node){
+            queue.add(node);
+        }
+
+        private void changePointerToFirstFromQueue() {
+            pointer = (Node) queue.remove();
+            setPointerIterator();
+        }
+
+        private void setPointerIterator() {
+            pointerIterator = pointer.iterator();
+        }
+        
     }
 
-    @Override
-    public Iterator<E> convert2Iterator(Node node) {
-        return convert2List(node).iterator();
-    }
 
-    @Override
-    public Stream<E> convert2Stream(Node node) {
-        return null;
-    }
 
 }
