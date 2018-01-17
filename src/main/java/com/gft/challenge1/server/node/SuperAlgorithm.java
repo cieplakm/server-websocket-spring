@@ -9,7 +9,7 @@ import java.util.Queue;
  * Algorithm iterate BFS method.
  *
  * */
-public class MySuperAlgorithm  {
+public class SuperAlgorithm {
     public static Iterator<Node> convert2Iterator(Node node){
         return new SuperIterator(node);
     }

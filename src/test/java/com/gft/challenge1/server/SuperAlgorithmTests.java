@@ -1,6 +1,6 @@
 package com.gft.challenge1.server;
 
-import com.gft.challenge1.server.node.MySuperAlgorithm;
+import com.gft.challenge1.server.node.SuperAlgorithm;
 import com.gft.challenge1.server.node.Node;
 import lombok.val;
 import org.junit.Test;
@@ -19,7 +19,7 @@ public class SuperAlgorithmTests {
 //        val child1 = new NodeImpl(root, "child1");
 //        val child12 = new NodeImpl(child1, "child12");
 //
-//        assertThat( MySuperAlgorithm.convert2Iterator(root) )
+//        assertThat( SuperAlgorithm.convert2Iterator(root) )
 //                .containsOnlyOnce(child1.getPayload(), child12.getPayload());
 //    }
 
@@ -43,7 +43,7 @@ public class SuperAlgorithmTests {
         val child1112 = new NodeImpl<>(child111, "L-child1112");
         val child1131 = new NodeImpl<>(child113, "M-child1131");
 
-        Iterator<Node> iter = MySuperAlgorithm.convert2Iterator(root);
+        Iterator<Node> iter = SuperAlgorithm.convert2Iterator(root);
 
         Node aChildB = iter.next();
         Node aChildC = iter.next();
