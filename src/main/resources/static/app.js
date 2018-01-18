@@ -22,6 +22,7 @@ function connect() {
     // Listen for messages
     socket.addEventListener('message', function (event) {
         console.log('Message from server ', event.data);
+        $("#greetings").clear();
         showGreeting( event.data );
     });
 
