@@ -1,15 +1,17 @@
 package com.gft.challenge1.server.node;
 
+import io.reactivex.Observable;
 import lombok.NonNull;
-import java.util.Iterator;
-import java.util.stream.Stream;
 
 
-/**Node iters through his children**/
+/**Node iterate through his children**/
 public interface Node<T> extends Iterable<Node> {
 
-    /**@return Yoy can get your payload data of any Node */
+    /**@return Yoy can get your payload data */
     @NonNull
     T getPayload();
+
+    /**You can observe changes children at this Node*/
+    Observable<Node> observable();
 
 }

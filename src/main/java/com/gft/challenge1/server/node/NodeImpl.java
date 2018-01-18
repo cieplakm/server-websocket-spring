@@ -1,20 +1,23 @@
 package com.gft.challenge1.server.node;
 
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Stream;
 
 /** This class is data tree.  */
-public class NodeImpl<T> implements Node<T> {
+public class NodeImpl<T> implements Node<T>{
     private Node parent;
     private List<Node> children;
     private T payload;
+    private PublishSubject<Node> subject;
 
 
     /** Constructor for root Node */
     public NodeImpl() {
-        this(null, (T) "root");
+        this(null, null);
     }
 
     /** Null
@@ -25,17 +28,44 @@ public class NodeImpl<T> implements Node<T> {
         this.parent = parent;
         payload = data;
 
-        if (parent != null)
-            ((NodeImpl)parent).addChild(this);
+        subject = PublishSubject.create();
 
+        if (parent != null){
+            ((NodeImpl)parent).addChild(this);
+        }
 
     }
 
     private void addChild(Node node) {
         children.add(node);
+        informObserversAboutChange(node);
+    }
+
+    private void informObserversAboutChange(Node node) {
+        //inform observer subscribed only to this Node
+        if (subject.hasObservers()) {
+            subject.onNext(node);
+        }
+
+        //inform every observer who subscribed to parent Node
+        if (parent != null){
+            informParentAboutChanges();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void informParentAboutChanges(){
+        Subject<Node> subject2 = (Subject<Node>) parent.observable();
+        subject2.onNext(this);
     }
 
     @Override
+    public Observable<Node> observable() {
+        return subject;
+    }
+
+    @Override
+    @org.jetbrains.annotations.NotNull
     public Iterator<Node> iterator() {
         return new NodeIterator();
     }
@@ -44,6 +74,7 @@ public class NodeImpl<T> implements Node<T> {
     public T getPayload() {
         return payload;
     }
+
 
     /**Iterator convert2Iterator children*/
     class NodeIterator implements Iterator<Node> {
@@ -60,7 +91,6 @@ public class NodeImpl<T> implements Node<T> {
             pointer++;
             return node;
         }
-
     }
 
 }
