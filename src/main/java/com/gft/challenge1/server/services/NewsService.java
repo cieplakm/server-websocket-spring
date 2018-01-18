@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gft.challenge1.server.websockets.Observer;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,16 +25,16 @@ public class NewsService {
     }
 
     private void informObserver(Observer observer, Stream<Message> messageStream) {
-        messageStream.forEach((message)->{
-            String json = createJSONString(message);
+        messageStream.forEach((message)-> sendSingleMessage(observer,message));
+    }
 
-            try {
-                observer.sendString(json);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        });
+    private void sendSingleMessage(Observer observer, Message message){
+        String json = createJSONString(message);
+        try {
+            observer.sendJSON(json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void informObservers(Stream<Message> messageStream) {

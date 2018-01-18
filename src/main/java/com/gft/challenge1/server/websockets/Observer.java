@@ -11,7 +11,7 @@ public class Observer {
         this.session = session;
     }
 
-    public void sendString(String text) throws IOException {
+    public void sendJSON(String text) throws IOException {
         if (session.isOpen()){
             session.sendMessage(new TextMessage(text));
         }
