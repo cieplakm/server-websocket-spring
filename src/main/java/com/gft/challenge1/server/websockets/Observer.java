@@ -4,15 +4,18 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import java.io.IOException;
 
-public class Client {
+public class Observer {
     private WebSocketSession session;
 
-    Client(WebSocketSession session) {
+    Observer(WebSocketSession session) {
         this.session = session;
     }
 
-    public void sendTest(String text) throws IOException {
-        session.sendMessage(new TextMessage(text));
+    public void sendString(String text) throws IOException {
+        if (session.isOpen()){
+            session.sendMessage(new TextMessage(text));
+        }
+
     }
 
     @Override

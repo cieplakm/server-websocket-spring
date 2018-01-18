@@ -1,29 +1,24 @@
 package com.gft.challenge1.server.websockets;
 
-import com.gft.challenge1.server.ServerObservers;
-import com.gft.challenge1.server.services.XYZService;
+import com.gft.challenge1.server.services.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 
-
 @Component
 public class MyWebSocketHandler implements WebSocketHandler {
 
-    @Autowired
-    XYZService XYZService;
-
-    private ServerObservers serverObservers;
-
+    private NewsService newsService;
 
     @Autowired
-    public MyWebSocketHandler(ServerObservers serverObservers) {
-        this.serverObservers = serverObservers;
+    public MyWebSocketHandler(NewsService newsService) {
+        this.newsService = newsService;
     }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession webSocketSession) throws Exception {
-        serverObservers.register(new Client(webSocketSession));
+        Observer observer = new Observer(webSocketSession);
+        newsService.register(observer);
     }
 
     @Override
@@ -39,7 +34,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession webSocketSession, CloseStatus closeStatus) throws Exception {
-        serverObservers.unregister(webSocketSession);
+        newsService.unregister(webSocketSession);
     }
 
     @Override
