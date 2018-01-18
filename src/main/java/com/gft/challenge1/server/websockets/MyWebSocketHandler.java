@@ -1,7 +1,7 @@
 package com.gft.challenge1.server.websockets;
 
 import com.gft.challenge1.server.ServerObservers;
-import com.gft.challenge1.server.services.FilesService;
+import com.gft.challenge1.server.services.XYZService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
@@ -11,7 +11,7 @@ import org.springframework.web.socket.*;
 public class MyWebSocketHandler implements WebSocketHandler {
 
     @Autowired
-    FilesService filesService;
+    XYZService XYZService;
 
     private ServerObservers serverObservers;
 
