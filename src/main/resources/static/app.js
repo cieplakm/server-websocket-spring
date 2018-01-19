@@ -15,14 +15,25 @@ function setConnected(connected) {
 function connect() {
     socket = new WebSocket('ws://localhost:8080/name_of_handler');
     socket.addEventListener('open', function (event) {
-        console.log("Connected!")
+        console.log("Connected!");
         socket.send('Hello Server!');
-        setConnected(true);
+        connect_callback();
     });
     // Listen for messages
+
     socket.addEventListener('message', function (event) {
         console.log('Message from server ', event.data);
-        showGreeting( event.data );
+
+        var json = JSON.parse(event.data);
+
+
+        if (json.order.valueOf() === "clear"){
+            console.log('Order to: ', json.order);
+            clear();
+        }else {
+            showGreeting( event.data );
+        }
+
     });
 
     // stompClient = Stomp.over(socket);
@@ -31,12 +42,8 @@ function connect() {
 }
 
 var connect_callback = function() {
-
     setConnected(true);
-    console.log('-------------->>>>>>>>>>>>>>> Connected: ');
-    // stompClient.subscribe('/topic/files', function (greeting) {
-    //
-    // });
+    console.log('--> Connected: ');
 };
 
 function disconnect() {
@@ -45,6 +52,10 @@ function disconnect() {
     }
     setConnected(false);
     console.log("Disconnected");
+}
+
+function clear() {
+    $("#greetings").empty();
 }
 
 function sendName() {

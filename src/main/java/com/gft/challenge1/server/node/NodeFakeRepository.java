@@ -26,7 +26,6 @@ public class NodeFakeRepository {
                 nodeIterator.remove();
                 return;
             }
-
         }
 
 

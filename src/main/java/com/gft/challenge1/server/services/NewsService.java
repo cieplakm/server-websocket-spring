@@ -30,11 +30,17 @@ public class NewsService {
         this.objectMapper = new ObjectMapper();
     }
 
+    private void sendClearMessage(){
+        sendWholeDataToAllObservers(new Message("clear",null));
+    }
+
     private void informObserver(Observer observer, Message messageStream) {
         sendMessage2Observer(observer, messageStream);
     }
 
     public void sendWholeDataToAllObservers() {
+        sendClearMessage();
+
         Iterator<Node> nodeIterator = nodeRepository.getRoot().iterator();
         Stream<Node> nodeStream = convertIteratorToStream(nodeIterator);
         Stream<Message> messageStream = createMessageStream(nodeStream);
