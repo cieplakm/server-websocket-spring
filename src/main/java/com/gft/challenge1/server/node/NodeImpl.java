@@ -14,7 +14,6 @@ public class NodeImpl<T> implements Node<T>{
     private T payload;
     private PublishSubject<Node> subject;
 
-
     /** Constructor for root Node */
     public NodeImpl() {
         this(null, null);
@@ -79,7 +78,7 @@ public class NodeImpl<T> implements Node<T>{
     /**Iterator convert2Iterator children*/
     class NodeIterator implements Iterator<Node> {
         int pointer = 0;
-
+        private Node lastReturnedNode;
         @Override
         public boolean hasNext() {
             return pointer < children.size() &&  !children.isEmpty();
@@ -87,9 +86,14 @@ public class NodeImpl<T> implements Node<T>{
 
         @Override
         public Node next() {
-            Node node = children.get(pointer);
+            lastReturnedNode = children.get(pointer);
             pointer++;
-            return node;
+            return lastReturnedNode;
+        }
+
+        @Override
+        public void remove() {
+            children.remove(lastReturnedNode);
         }
     }
 

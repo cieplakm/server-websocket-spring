@@ -20,4 +20,11 @@ public class NodeService {
         newsService.sendWholeDataToAllObservers();
         return "Node \"" + name + "\"created successfully.";
     }
+
+    @RequestMapping(path = "/delete")
+    public String delNode(@RequestParam(value = "name") String name){
+        nodeRepozitory.removeNode(name);
+        newsService.sendWholeDataToAllObservers();
+        return "Node \"" + name + "\"deleted successfully.";
+    }
 }
