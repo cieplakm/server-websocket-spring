@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan
 public class MainConfig {
     @Bean
-    NodeFakeRepository nodeRepozitory(){
+    NodeFakeRepository fakeRepository(){
         return new NodeFakeRepository();
     }
 }
