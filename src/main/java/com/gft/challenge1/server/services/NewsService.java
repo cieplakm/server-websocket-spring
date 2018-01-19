@@ -6,14 +6,14 @@ import com.gft.challenge1.server.node.Node;
 import com.gft.challenge1.server.node.NodeFakeRepository;
 import com.gft.challenge1.server.websockets.Observer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Observable;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -29,8 +29,6 @@ public class NewsService {
         this.nodeRepository = fakeRepository;
         this.observers = new ArrayList<>();
         this.objectMapper = new ObjectMapper();
-
-        nodeRepository.subscribe(o -> sendWholeDataToAllObservers());
     }
 
     private void sendClearMessage(){
@@ -110,4 +108,12 @@ public class NewsService {
             }
         }
     }
+
+    @EventListener
+    public void onApplicationEvent(OnNodeRepositoryChangedEvent onNodeRepositoryChangedEvent) {
+        sendWholeDataToAllObservers();
+    }
+
+
+
 }

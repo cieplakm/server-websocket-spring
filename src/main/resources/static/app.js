@@ -63,7 +63,13 @@ function sendName() {
 }
 
 function showGreeting(message) {
-    $("#greetings").append("<tr><td>" + message + "</td></tr>");
+    var json = JSON.parse(message);
+    if (json.data.valueOf() === "nie"){
+        $("#greetings").append("<tr><td></td><td>" + "File name: " + json.data + "</td></tr>");
+    }else {
+        $("#greetings").append("<tr><td>" + "File name: " + json.data + "</td></tr>");
+
+    }
 }
 
 $(function () {
