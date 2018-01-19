@@ -1,3 +1,5 @@
+package com.gft.challenge1.server;
+
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.Label;
