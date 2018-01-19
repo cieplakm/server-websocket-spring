@@ -13,7 +13,9 @@ public class NodeFakeRepository extends Observable {
 
     public void addNewNode(String name){
         new NodeImpl<>(root, name);
-        observer.onNext(null);
+
+        if (observer != null)
+            observer.onNext(null);
     }
 
     public Node<String> getRoot(){
@@ -32,7 +34,8 @@ public class NodeFakeRepository extends Observable {
             }
         }
 
-        observer.onNext(null);
+        if (observer != null)
+            observer.onNext(null);
     }
 
     @Override
