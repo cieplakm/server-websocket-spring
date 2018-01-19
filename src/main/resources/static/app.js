@@ -67,6 +67,7 @@ function showGreeting(message) {
 }
 
 $(function () {
+    $("#conversation").hide();
     $("form").on('submit', function (e) {
         e.preventDefault();
     });

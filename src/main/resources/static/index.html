@@ -19,9 +19,8 @@
         <div class="col-md-6">
             <form class="form-inline">
                 <div class="form-group">
-                    <label for="connect">WebSocket connection:</label>
-                    <button id="connect" class="btn btn-default" type="submit">Register as observer</button>
-                    <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Unregister
+                    <button id="connect" class="btn btn-default" type="submit">Start observing</button>
+                    <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Stop observing
                     </button>
                 </div>
             </form>
@@ -44,7 +43,7 @@
             <table id="conversation" class="table table-striped">
                 <thead>
                 <tr>
-                    <th>Files</th>
+                    <th>Files list</th>
                 </tr>
                 </thead>
                 <tbody id="greetings">

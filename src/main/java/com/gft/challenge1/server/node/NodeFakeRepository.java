@@ -1,15 +1,19 @@
 package com.gft.challenge1.server.node;
 
+import io.reactivex.Observable;
+import io.reactivex.Observer;
 import org.springframework.stereotype.Component;
 
 import java.util.Iterator;
 
 @Component
-public class NodeFakeRepository {
+public class NodeFakeRepository extends Observable {
     private Node<String> root = new NodeImpl<>();
+    private Observer observer;
 
     public void addNewNode(String name){
         new NodeImpl<>(root, name);
+        observer.onNext(null);
     }
 
     public Node<String> getRoot(){
@@ -28,8 +32,11 @@ public class NodeFakeRepository {
             }
         }
 
+        observer.onNext(null);
+    }
 
-
-
+    @Override
+    protected void subscribeActual(Observer observer) {
+        this.observer = observer;
     }
 }

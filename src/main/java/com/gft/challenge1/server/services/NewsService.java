@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Observable;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -24,10 +25,12 @@ public class NewsService {
     private NodeFakeRepository nodeRepository;
 
     @Autowired
-    public NewsService(NodeFakeRepository nodeRepozitory) {
-        this.nodeRepository = nodeRepozitory;
+    public NewsService(NodeFakeRepository fakeRepository) {
+        this.nodeRepository = fakeRepository;
         this.observers = new ArrayList<>();
         this.objectMapper = new ObjectMapper();
+
+        nodeRepository.subscribe(o -> sendWholeDataToAllObservers());
     }
 
     private void sendClearMessage(){
@@ -38,14 +41,23 @@ public class NewsService {
         sendMessage2Observer(observer, messageStream);
     }
 
-    public void sendWholeDataToAllObservers() {
-        sendClearMessage();
-
+    public Stream<Message> prepareData(){
         Iterator<Node> nodeIterator = nodeRepository.getRoot().iterator();
         Stream<Node> nodeStream = convertIteratorToStream(nodeIterator);
         Stream<Message> messageStream = createMessageStream(nodeStream);
 
-        messageStream.forEach((this::sendWholeDataToAllObservers));
+        return messageStream;
+    }
+
+    public void sendWholeDataToAllObservers() {
+        sendClearMessage();
+        prepareData().forEach((this::sendWholeDataToAllObservers));
+    }
+
+    private void sendDataToOneObserver(Observer observer){
+        prepareData().forEach((message)->{
+            sendMessage2Observer(observer, message);
+        });
     }
 
     private Stream<Message> createMessageStream(Stream<Node> stream){
@@ -87,6 +99,7 @@ public class NewsService {
 
     public void register(Observer observer){
         observers.add(observer);
+        sendDataToOneObserver(observer);
     }
 
     public void unregister(WebSocketSession observerToRemove){
