@@ -22,5 +22,5 @@ public class WebSocketConfig implements WebSocketConfigurer {
     public void registerWebSocketHandlers(WebSocketHandlerRegistry webSocketHandlerRegistry) {
         webSocketHandlerRegistry.addHandler(myWebSocketHandler, "/name_of_handler");
     }
-    
+
 }

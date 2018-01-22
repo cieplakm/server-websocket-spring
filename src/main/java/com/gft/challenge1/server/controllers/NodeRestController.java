@@ -1,4 +1,4 @@
-package com.gft.challenge1.server.services;
+package com.gft.challenge1.server.controllers;
 
 import com.gft.challenge1.server.node.NodeFakeRepository;
 import org.springframework.context.ApplicationListener;
@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/admin")
-public class NodeService{
+public class NodeRestController {
     private NodeFakeRepository fakeRepository;
 
-    public NodeService(NodeFakeRepository fakeRepository) {
+    public NodeRestController(NodeFakeRepository fakeRepository) {
         this.fakeRepository = fakeRepository;
     }
 
