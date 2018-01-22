@@ -1,71 +1,67 @@
 package com.gft.challenge1.server.node;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 import java.util.Queue;
-
 
 /** Assumptions: Node iterator iterate through his children.
  * Algorithm iterate BFS method.
- *
+ * Node cannot be null
  * */
 public class SuperAlgorithm {
-    public static Iterator<Node> convert2Iterator(Node node){
-        return new SuperIterator(node);
+    public static <E> Iterable<E> convert2Iterator(@NotNull Node<E> node){
+        return () -> new SuperIterator<>(node);
     }
 
-    static class SuperIterator implements Iterator<Node> {
-        private Node pointer;
-        private Iterator pointerIterator;
-        private Queue<Node> queue;
+    static class SuperIterator<T> implements Iterator<T> {
+        private Node<T> pointer;
+        private Iterator<Node<T>> pointerIterator;
+        private Queue<Node<T>> queue;
+        private T next;
 
-
-        private SuperIterator(Node node) {
+        private SuperIterator(Node<T> node) {
             pointer = node;
             queue = new LinkedList<>();
 
             pointerIterator = pointer.iterator();
+
+            next = giveMeNextNode();
         }
 
         @Override
         public boolean hasNext() {
-            return true;
+            return next != null;
         }
 
         @Override
-        public Node next() {
-            return giveMeNextNode();
+        public T next() {
+            T current = next;
+            next = giveMeNextNode();
+
+            return current;
         }
 
-        private Node giveMeNextNode(){
+        private T giveMeNextNode(){
             if (pointerIterator.hasNext()){
+                Node<T> node = pointerIterator.next();
+                queue.add(node);
 
-                Node node = (Node) pointerIterator.next();
-                addNodeToQueue(node);
-
-                return node;
+                return node.getPayload();
             }else {
-                changePointerToFirstFromQueue();
+                try {
+                    pointer = queue.remove();
+                }catch (NoSuchElementException nsee){
+                    return null;
+                }
+                pointerIterator = pointer.iterator();
 
                 return giveMeNextNode();
             }
         }
 
-        private void addNodeToQueue(Node node){
-            queue.add(node);
-        }
-
-        private void changePointerToFirstFromQueue() {
-            pointer = queue.remove();
-            setPointerIterator();
-        }
-
-        private void setPointerIterator() {
-            pointerIterator = pointer.iterator();
-        }
-
     }
-
-
 
 }

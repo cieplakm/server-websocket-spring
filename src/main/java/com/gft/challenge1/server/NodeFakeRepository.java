@@ -1,5 +1,7 @@
-package com.gft.challenge1.server.node;
+package com.gft.challenge1.server;
 
+import com.gft.challenge1.server.node.Node;
+import com.gft.challenge1.server.node.NodeImpl;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -31,7 +33,7 @@ public class NodeFakeRepository {
     }
 
     public void removeNode(String name) {
-        Iterator<Node> nodeIterator = root.iterator();
+        Iterator<Node<String>> nodeIterator = root.iterator();
 
         while(nodeIterator.hasNext()){
             Node node = nodeIterator.next();

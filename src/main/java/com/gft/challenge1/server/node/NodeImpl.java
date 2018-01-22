@@ -65,7 +65,7 @@ public class NodeImpl<T> implements Node<T>{
 
     @Override
     @org.jetbrains.annotations.NotNull
-    public Iterator<Node> iterator() {
+    public Iterator<Node<T>> iterator() {
         return new NodeIterator();
     }
 
@@ -76,7 +76,7 @@ public class NodeImpl<T> implements Node<T>{
 
 
     /**Iterator convert2Iterator children*/
-    class NodeIterator implements Iterator<Node> {
+    class NodeIterator implements Iterator<Node<T>> {
         int pointer = 0;
         private Node lastReturnedNode;
         @Override

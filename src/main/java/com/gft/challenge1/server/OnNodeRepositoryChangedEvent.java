@@ -1,4 +1,4 @@
-package com.gft.challenge1.server.node;
+package com.gft.challenge1.server;
 
 public class OnNodeRepositoryChangedEvent {
 }

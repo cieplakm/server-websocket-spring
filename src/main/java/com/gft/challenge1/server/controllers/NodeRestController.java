@@ -1,8 +1,6 @@
 package com.gft.challenge1.server.controllers;
 
-import com.gft.challenge1.server.node.NodeFakeRepository;
-import org.springframework.context.ApplicationListener;
-import org.springframework.web.bind.annotation.Mapping;
+import com.gft.challenge1.server.NodeFakeRepository;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,10 +14,12 @@ public class NodeRestController {
         this.fakeRepository = fakeRepository;
     }
 
-    @RequestMapping(path = "/add")
-    public String addNode(@RequestParam(value = "name", defaultValue = "New Node") String name){
-        fakeRepository.addNewNode(name);
-        return "Node \"" + name + "\"created successfully.";
+    @RequestMapping(path = "/addFile")
+    public String addNode(@RequestParam(value = "name") String path){
+
+        fakeRepository.addNewNode(path);
+
+        return "Node \"" + path + "\"created successfully. ";
     }
 
     @RequestMapping(path = "/delete")

@@ -3,8 +3,8 @@ package com.gft.challenge1.server.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gft.challenge1.server.node.Node;
-import com.gft.challenge1.server.node.NodeFakeRepository;
-import com.gft.challenge1.server.node.OnNodeRepositoryChangedEvent;
+import com.gft.challenge1.server.NodeFakeRepository;
+import com.gft.challenge1.server.OnNodeRepositoryChangedEvent;
 import com.gft.challenge1.server.websockets.Observer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -40,8 +40,8 @@ public class NewsService {
     }
 
     public Stream<Message> prepareData(){
-        Iterator<Node> nodeIterator = nodeRepository.getRoot().iterator();
-        Stream<Node> nodeStream = convertIteratorToStream(nodeIterator);
+        Iterator<Node<String>> nodeIterator = nodeRepository.getRoot().iterator();
+        Stream<Node<String>> nodeStream = convertIteratorToStream(nodeIterator);
         Stream<Message> messageStream = createMessageStream(nodeStream);
 
         return messageStream;
@@ -58,7 +58,7 @@ public class NewsService {
         });
     }
 
-    private Stream<Message> createMessageStream(Stream<Node> stream){
+    private Stream<Message> createMessageStream(Stream<Node<String>> stream){
         return stream.map(node -> new Message<>("update", node.getPayload()));
     }
 
