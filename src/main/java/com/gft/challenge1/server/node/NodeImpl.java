@@ -94,6 +94,9 @@ public class NodeImpl<T> implements Node<T>{
         @Override
         public void remove() {
             children.remove(lastReturnedNode);
+            if (subject.hasObservers()) {
+                subject.onNext(new NodeImpl());
+            }
         }
     }
 

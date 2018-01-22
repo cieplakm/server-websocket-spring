@@ -20,6 +20,6 @@ public class Observer {
 
     @Override
     public boolean equals(Object obj) {
-        return this.session == obj;
+        return obj instanceof Observer && this.session == obj;
     }
 }

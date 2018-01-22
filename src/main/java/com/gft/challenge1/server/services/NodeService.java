@@ -28,4 +28,9 @@ public class NodeService{
         return "Node \"" + name + "\"deleted successfully.";
     }
 
+    @RequestMapping()
+    public String admin(){
+        return "<html><body><h1>bla</h1><a href=\"/admin/add\">add</a></body></html>";
+    }
+
 }

@@ -1,6 +1,5 @@
 package com.gft.challenge1.server.node;
 
-import com.gft.challenge1.server.services.OnNodeRepositoryChangedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -15,6 +14,7 @@ public class NodeFakeRepository {
 
     public NodeFakeRepository() {
         root = new NodeImpl<>();
+        root.observable().subscribe(node -> onRepositoryChanged());
     }
 
     @Autowired
@@ -24,7 +24,6 @@ public class NodeFakeRepository {
 
     public void addNewNode(String name){
         new NodeImpl<>(root, name);
-        onRepositoryChanged();
     }
 
     public Node<String> getRoot(){
@@ -39,7 +38,6 @@ public class NodeFakeRepository {
 
             if (node.getPayload().equals(name)){
                 nodeIterator.remove();
-                onRepositoryChanged();
                 return;
             }
         }
