@@ -7,14 +7,12 @@ import org.junit.Test;
 import static org.assertj.core.api.Assertions.*;
 import com.gft.challenge1.server.node.NodeImpl;
 
-import java.util.Iterator;
-
 public class SuperAlgorithmTests {
 
     @Test
     public void shouldBeEmpty(){
         Node<String> root = new NodeImpl<>();
-        assertThat(SuperAlgorithm.convert2Iterator(root)).isEmpty();
+        assertThat(SuperAlgorithm.convert2Iterable(root)).isEmpty();
     }
 
     @Test
@@ -24,7 +22,7 @@ public class SuperAlgorithmTests {
         Node<String> root = new NodeImpl<>();
         val child1 = new NodeImpl<>(root, B);
 
-        assertThat(SuperAlgorithm.convert2Iterator(root)).containsOnlyOnce(B);
+        assertThat(SuperAlgorithm.convert2Iterable(root)).containsOnlyOnce(B);
     }
 
     @Test
@@ -39,6 +37,6 @@ public class SuperAlgorithmTests {
         val child2 = new NodeImpl<>(root, C);
         val child11 = new NodeImpl<>(child1, D);
 
-        assertThat(SuperAlgorithm.convert2Iterator(root)).containsOnlyOnce(C,B,D);
+        assertThat(SuperAlgorithm.convert2Iterable(root)).containsOnlyOnce(C,B,D);
     }
 }

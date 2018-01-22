@@ -7,12 +7,12 @@ import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
-/** Assumptions: Node iterator iterate through his children.
+/**
  * Algorithm iterate BFS method.
- * Node cannot be null
  * */
 public class SuperAlgorithm {
-    public static <E> Iterable<E> convert2Iterator(@NotNull Node<E> node){
+
+    public static <E> Iterable<E> convert2Iterable(@NotNull Node<E> node){
         return () -> new SuperIterator<>(node);
     }
 
@@ -23,11 +23,9 @@ public class SuperAlgorithm {
         private T next;
 
         private SuperIterator(Node<T> node) {
-            pointer = node;
             queue = new LinkedList<>();
-
+            pointer = node;
             pointerIterator = pointer.iterator();
-
             next = giveMeNextNode();
         }
 
@@ -53,7 +51,7 @@ public class SuperAlgorithm {
             }else {
                 try {
                     pointer = queue.remove();
-                }catch (NoSuchElementException nsee){
+                }catch (NoSuchElementException exception){
                     return null;
                 }
                 pointerIterator = pointer.iterator();

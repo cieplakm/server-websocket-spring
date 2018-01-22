@@ -75,7 +75,7 @@ public class NodeImpl<T> implements Node<T>{
     }
 
 
-    /**Iterator convert2Iterator children*/
+    /**Iterator convert2Iterable children*/
     class NodeIterator implements Iterator<Node<T>> {
         int pointer = 0;
         private Node lastReturnedNode;
