@@ -25,34 +25,6 @@ public class MyWebSocketHandler implements WebSocketHandler {
     @Autowired
     public MyWebSocketHandler(NewsService newsService) {
         this.newsService = newsService;
-
-
-        List<String> l = new ArrayList<>();
-
-        for (int i = 0; i < 20; i++){
-            l.add("BLA"+i);
-        }
-
-        Observable observableFromList = Observable.fromArray(l.toArray());
-        Observable observableInterval = Observable.interval(10, TimeUnit.SECONDS);
-
-        Observable f =  new PathObservable(FileSystems.getDefault().getPath("C:\\Users\\mzck\\Desktop\\server")).getObservable();
-
-
-
-
-        Observable stringInterval = f.flatMap(new Function() {
-            @Override
-            public Observable apply(Object o) throws Exception {
-                return observableFromList;
-            }
-        });
-
-
-
-        stringInterval.subscribe((Consumer<String>) strings -> {
-            System.out.println(strings);
-        });
     }
 
     @Override

@@ -2,21 +2,18 @@ package com.gft.challenge1.server;
 
 import com.gft.challenge1.server.node.Node;
 import com.gft.challenge1.server.node.NodeImpl;
-import com.gft.challenge1.server.node.SuperAlgorithm;
 import com.google.common.collect.ImmutableList;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import lombok.SneakyThrows;
 import lombok.val;
-import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
@@ -55,14 +52,12 @@ public class RQWERTests {
         val child3 = new NodeImpl<>(root, D);
         val child4 = new NodeImpl<>(root, E);
 
-        Node testNode = new NodeImpl<String>();
+        Node<String> testNode = new NodeImpl<String>();
 
-        Observable o = pathObservable.flatMap(new Function<DirectoryChangedEvent, ObservableSource<?>>() {
-            @Override
-            public ObservableSource<?> apply(DirectoryChangedEvent directoryChangedEvent) throws Exception {
-                return Observable.just(testNode);
-            }
-        });
+
+        Observable<Node<String>> path2Node = pathObservable.map((Function<DirectoryChangedEvent, Node>) directoryChangedEvent -> testNode);
+        Observable<Node<String>> fromIterator = Observable.fromIterable(root);
+        Observable<Node<String>> nodeFromListAndEvent = path2Node.startWith(fromIterator);
 
         try {
             Path hello = tempDirectory.resolve("test.txt");
@@ -71,29 +66,9 @@ public class RQWERTests {
             e.printStackTrace();
         }
 
-        Observable oo = Observable.fromIterable(root).startWith(o);
 
-        oo.blockingSubscribe(new Observer() {
-            @Override
-            public void onSubscribe(Disposable d) {
+        Iterable<Node<String>> actual = nodeFromListAndEvent.blockingIterable();
 
-            }
-
-            @Override
-            public void onNext(Object o) {
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onComplete() {
-
-            }
-        });
 
 
 
