@@ -7,11 +7,10 @@ import java.io.IOException;
 import java.nio.file.*;
 
 public class PathObservable{
-    private WatchService  watchService;
-    private Observable<DirectoryChangedEvent> observable;
-
-    public PathObservable(@NotNull Path directoryToObserve) {
+    public static Observable<DirectoryChangedEvent> observable(@NotNull Path directoryToObserve) {
         FileSystem fs = directoryToObserve.getFileSystem();
+        WatchService watchService = null;
+        Observable<DirectoryChangedEvent> observable = null;
 
         try {
             watchService = fs.newWatchService();
@@ -20,26 +19,26 @@ public class PathObservable{
             e.printStackTrace();
         }
 
-        observable = Observable.create(emitter -> {
-            for(;;){
-                WatchKey key;
-                try {
-                    key = watchService.take();
-                } catch (InterruptedException x) {
-                    return;
+        if (observable == null) {
+            WatchService finalWatchService = watchService;
+            observable = Observable.create(emitter -> {
+                for(;;){
+                    WatchKey key;
+                    try {
+                        key = finalWatchService.take();
+                    } catch (InterruptedException x) {
+                        return;
+                    }
+                    emitter.onNext(new DirectoryChangedEvent());
+                    key.pollEvents();
+                    boolean valid = key.reset();
+                    if (!valid) {
+                        break;
+                    }
                 }
-                emitter.onNext(new DirectoryChangedEvent());
-                key.pollEvents();
-                boolean valid = key.reset();
-                if (!valid) {
-                    break;
-                }
-            }
-        });
-
-    }
-
-    public Observable<DirectoryChangedEvent> getObservable() {
+            });
+        }
         return observable.subscribeOn(Schedulers.computation());
     }
+
 }
