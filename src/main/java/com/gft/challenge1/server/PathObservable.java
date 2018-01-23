@@ -28,17 +28,13 @@ public class PathObservable{
                 } catch (InterruptedException x) {
                     return;
                 }
-
                 emitter.onNext(new DirectoryChangedEvent());
-
                 key.pollEvents();
-
                 boolean valid = key.reset();
                 if (!valid) {
                     break;
                 }
             }
-
         });
 
     }
