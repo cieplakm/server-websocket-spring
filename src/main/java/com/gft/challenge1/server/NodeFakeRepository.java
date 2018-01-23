@@ -16,7 +16,6 @@ public class NodeFakeRepository {
 
     public NodeFakeRepository() {
         root = new NodeImpl<>();
-        root.observable().subscribe(node -> onRepositoryChanged());
     }
 
     @Autowired
@@ -47,6 +46,6 @@ public class NodeFakeRepository {
 
     private void onRepositoryChanged() {
         if (publisher != null)
-            publisher.publishEvent(new OnNodeRepositoryChangedEvent());
+            publisher.publishEvent(new DirectoryChangedEvent());
     }
 }

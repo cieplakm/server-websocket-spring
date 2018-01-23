@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gft.challenge1.server.node.Node;
 import com.gft.challenge1.server.NodeFakeRepository;
-import com.gft.challenge1.server.OnNodeRepositoryChangedEvent;
+import com.gft.challenge1.server.DirectoryChangedEvent;
 import com.gft.challenge1.server.websockets.Observer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -29,6 +29,9 @@ public class NewsService {
         this.nodeRepository = fakeRepository;
         this.observers = new ArrayList<>();
         this.objectMapper = new ObjectMapper();
+
+
+
     }
 
     private void sendClearMessage(){
@@ -110,10 +113,8 @@ public class NewsService {
     }
 
     @EventListener
-    public void onApplicationEvent(OnNodeRepositoryChangedEvent onNodeRepositoryChangedEvent) {
+    public void onApplicationEvent(DirectoryChangedEvent directoryChangedEvent) {
         sendWholeDataToAllObservers();
     }
-
-
 
 }

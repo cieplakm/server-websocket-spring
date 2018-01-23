@@ -1,10 +1,10 @@
 package com.gft.challenge1.server.node;
 
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.NoSuchElementException;
 import java.util.Queue;
 
 /**
@@ -17,49 +17,29 @@ public class SuperAlgorithm {
     }
 
     static class SuperIterator<T> implements Iterator<T> {
-        private Node<T> pointer;
-        private Iterator<Node<T>> pointerIterator;
-        private Queue<Node<T>> queue;
-        private T next;
+        private Queue<Node<T>> candidatesNodes;
 
-        private SuperIterator(Node<T> node) {
-            queue = new LinkedList<>();
-            pointer = node;
-            pointerIterator = pointer.iterator();
-            next = giveMeNextNode();
+        private SuperIterator(Node<T> root) {
+            candidatesNodes = new LinkedList<>();
+            for (Node n : root){
+                candidatesNodes.add(n);
+            }
         }
 
         @Override
         public boolean hasNext() {
-            return next != null;
+            return !candidatesNodes.isEmpty();
         }
 
         @Override
         public T next() {
-            T current = next;
-            next = giveMeNextNode();
-
-            return current;
-        }
-
-        private T giveMeNextNode(){
-            if (pointerIterator.hasNext()){
-                Node<T> node = pointerIterator.next();
-                queue.add(node);
-
-                return node.getPayload();
-            }else {
-                try {
-                    pointer = queue.remove();
-                }catch (NoSuchElementException exception){
-                    return null;
-                }
-                pointerIterator = pointer.iterator();
-
-                return giveMeNextNode();
+            val result = candidatesNodes.remove();
+            for (Node n : result){
+                candidatesNodes.add(n);
             }
+            return result.getPayload();
         }
-
     }
-
 }
+
+

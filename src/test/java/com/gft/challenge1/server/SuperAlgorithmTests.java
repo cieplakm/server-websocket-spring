@@ -3,8 +3,8 @@ package com.gft.challenge1.server;
 import com.gft.challenge1.server.node.SuperAlgorithm;
 import com.gft.challenge1.server.node.Node;
 import lombok.val;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
-import static org.assertj.core.api.Assertions.*;
 import com.gft.challenge1.server.node.NodeImpl;
 
 public class SuperAlgorithmTests {
@@ -12,7 +12,7 @@ public class SuperAlgorithmTests {
     @Test
     public void shouldBeEmpty(){
         Node<String> root = new NodeImpl<>();
-        assertThat(SuperAlgorithm.convert2Iterable(root)).isEmpty();
+        Assertions.assertThat(SuperAlgorithm.convert2Iterable(root)).isEmpty();
     }
 
     @Test
@@ -22,7 +22,7 @@ public class SuperAlgorithmTests {
         Node<String> root = new NodeImpl<>();
         val child1 = new NodeImpl<>(root, B);
 
-        assertThat(SuperAlgorithm.convert2Iterable(root)).containsOnlyOnce(B);
+        Assertions.assertThat(SuperAlgorithm.convert2Iterable(root)).containsOnlyOnce(B);
     }
 
     @Test
@@ -37,6 +37,23 @@ public class SuperAlgorithmTests {
         val child2 = new NodeImpl<>(root, C);
         val child11 = new NodeImpl<>(child1, D);
 
-        assertThat(SuperAlgorithm.convert2Iterable(root)).containsOnlyOnce(C,B,D);
+        Assertions.assertThat(SuperAlgorithm.convert2Iterable(root)).containsOnlyOnce(C,B,D);
+    }
+
+    @Test
+    public void shouldContainsOnlyOnce(){
+        String B = "B";
+        String C = "C";
+        String D = "D";
+        String E = "E";
+
+        Node<String> root = new NodeImpl<>();
+
+        val child1 = new NodeImpl<>(root, B);
+        val child2 = new NodeImpl<>(child1, C);
+        val child3 = new NodeImpl<>(child1, D);
+        val child4 = new NodeImpl<>(child1, E);
+
+        Assertions.assertThat(SuperAlgorithm.convert2Iterable(root)).containsOnlyOnce(C,B,D,E);
     }
 }

@@ -11,7 +11,4 @@ public interface Node<T> extends Iterable<Node<T>> {
     @NonNull
     T getPayload();
 
-    /**You can observe changes children at this Node*/
-    Observable<Node> observable();
-
 }
