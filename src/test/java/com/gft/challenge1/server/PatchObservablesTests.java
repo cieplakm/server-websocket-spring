@@ -24,6 +24,7 @@ import static com.gft.challenge1.server.PathObservables.EventType.DELETED;
 
 public class PatchObservablesTests {
     private Path tempDirectory;
+    Observable<PathObservables.Event> watcher;
 
     @Before
     @SneakyThrows
@@ -32,50 +33,42 @@ public class PatchObservablesTests {
         FileSystem fs = Jimfs.newFileSystem(Configuration.windows());
         tempDirectory = fs.getPath("C:/temp");
         Files.createDirectory(tempDirectory);
+
+        Path toDelete = tempDirectory.resolve("To delete");
+        Files.createDirectory(toDelete);
+
+        watcher = PathObservables.watch(tempDirectory);
     }
 
     @Test
     @SneakyThrows
     public void shouldNotifyAboutSimpleFile(){
-        val watcher = PathObservables.watch(tempDirectory);
+        Path hello = tempDirectory.resolve("New Folder");
+        Files.createDirectory(hello);
 
-        Path hello = tempDirectory.resolve("addedDir2");
-
-        try {
-            Files.createDirectory(hello);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         val expected = watcher.blockingFirst();
-
         Assertions.assertThat(expected).isNotNull();
     }
 
     @Test
     @SneakyThrows
     public void shouldReturnCreateEvent(){
-        val watcher = PathObservables.watch(tempDirectory);
         Path createdDir = tempDirectory.resolve("new dir");
-
         Files.createDirectory(createdDir);
+
         val createExpected =  watcher.blockingFirst();
         Assertions.assertThat(createExpected.getType()).isEqualTo(CREATED);
-
     }
 
     @Test
     @SneakyThrows
     public void shouldReturnDeleteEvent(){
-        Path dirToDelete = tempDirectory.resolve("dirTodelete");
-        Files.createDirectory(dirToDelete);
+        Path dirToDelete = tempDirectory.resolve("To delete");
 
-        val watcher = PathObservables.watch(tempDirectory);
         Files.delete(dirToDelete);
         val createExpected =  watcher.blockingFirst();
         Assertions.assertThat(createExpected.getType()).isEqualTo(DELETED);
 
     }
-
-
 }
