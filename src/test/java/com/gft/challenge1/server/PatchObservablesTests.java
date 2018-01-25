@@ -1,7 +1,6 @@
 package com.gft.challenge1.server;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.Before;
@@ -9,28 +8,21 @@ import org.junit.Test;
 import org.assertj.core.api.Assertions;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
-import org.omg.CORBA.OBJ_ADAPTER;
-
-import java.io.File;
-import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import static com.gft.challenge1.server.PathObservables.EventType.CREATED;
 import static com.gft.challenge1.server.PathObservables.EventType.DELETED;
 
 public class PatchObservablesTests {
     private Path tempDirectory;
-    Observable<PathObservables.Event> watcher;
+    private Observable<PathObservables.Event> watcher;
+    private FileSystem fs;
 
     @Before
     @SneakyThrows
     public void setupTest(){
-
-        FileSystem fs = Jimfs.newFileSystem(Configuration.windows());
+        fs = Jimfs.newFileSystem(Configuration.windows());
         tempDirectory = fs.getPath("C:/temp");
         Files.createDirectory(tempDirectory);
 
@@ -45,7 +37,6 @@ public class PatchObservablesTests {
     public void shouldNotifyAboutSimpleFile(){
         Path hello = tempDirectory.resolve("New Folder");
         Files.createDirectory(hello);
-
 
         val expected = watcher.blockingFirst();
         Assertions.assertThat(expected).isNotNull();
@@ -71,4 +62,16 @@ public class PatchObservablesTests {
         Assertions.assertThat(createExpected.getType()).isEqualTo(DELETED);
 
     }
+
+    @Test
+    @SneakyThrows
+    public void shouldReturnPathToCreatedFolder(){
+        Path superDir = tempDirectory.resolve("Super dir");
+
+        Files.createDirectory(superDir);
+        val createExpected =  watcher.blockingFirst();
+        Assertions.assertThat(createExpected.getSubject()).isEqualTo(superDir);
+
+    }
+
 }

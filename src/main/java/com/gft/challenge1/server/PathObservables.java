@@ -3,53 +3,44 @@ package com.gft.challenge1.server;
 import com.sun.nio.file.SensitivityWatchEventModifier;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.schedulers.Schedulers;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 
-/**For every Path this class should be a Singleton*/
 public class PathObservables {
 
-    public static Observable<Event> watch(@NotNull Path directoryToObserve) {
+    public static Observable<Event> watch(@NotNull Path directoryToObserve) throws IOException {
         return new ObservableFactory(directoryToObserve).create();
     }
 
     enum EventType {
-        CREATED, DELETED
+        CREATED, UNKNOWN, DELETED
     }
 
     @Value
     public static class Event {
         private EventType type;
-        private File subject;
+        private Path subject;
     }
 
     private static class ObservableFactory {
 
         private WatchService watchService;
-
         private Path dir2Watch;
 
-        private ObservableFactory(Path dir2Watch) {
+        private ObservableFactory(Path dir2Watch) throws IOException{
             this.dir2Watch = dir2Watch;
             FileSystem fs = dir2Watch.getFileSystem();
-            try {
-                watchService = fs.newWatchService();
-                registerPathWithWatchService();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+            watchService = fs.newWatchService();
+            registerPathWithWatchService();
         }
 
         private Observable<Event> create(){
-            return Observable.create((ObservableOnSubscribe<Event>) emitter -> {
-                startListening4Change(emitter);
-            }).subscribeOn(Schedulers.computation());
+            return Observable
+                    .create(this::startListening4Change)
+                    .subscribeOn(Schedulers.computation());
         }
 
         private void registerPathWithWatchService() throws IOException {
@@ -63,16 +54,19 @@ public class PathObservables {
 
         private void startListening4Change(ObservableEmitter<Event> emitter) {
             while(true){
-                //wait for key
-                WatchKey key = null;
+
+                WatchKey key;
                 try {
+                    //waiting for key
                     key = watchService.take();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    emitter.onError(e);
+                    break;
                 }
+
                 for (WatchEvent event : key.pollEvents()){
                     EventType eventType = getEventType(event);
-                    emitter.onNext(new Event(eventType, new File("/")));
+                    emitter.onNext(new Event(eventType, dir2Watch.resolve((Path)event.context())));
                 }
 
                 boolean valid = key.reset();
@@ -88,8 +82,9 @@ public class PathObservables {
                 return EventType.CREATED;
             }else if (event.kind() == StandardWatchEventKinds.ENTRY_DELETE){
                 return EventType.DELETED;
+            }else {
+                return EventType.UNKNOWN;
             }
-            return null;
         }
     }
 }
