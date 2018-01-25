@@ -1,26 +1,28 @@
 package com.gft.challenge1.server.websockets;
 
-import com.gft.challenge1.server.PathObservable;
+import com.gft.challenge1.server.PathObservables;
 import com.gft.challenge1.server.services.NewsService;
+import com.google.common.jimfs.Configuration;
+import com.google.common.jimfs.Jimfs;
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 
+import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 
 @Component
 public class MyWebSocketHandler implements WebSocketHandler {
 
     private NewsService newsService;
+    Observable<PathObservables.Event> observ;
+    Disposable disposable;
 
     @Autowired
     public MyWebSocketHandler(NewsService newsService) {
@@ -30,7 +32,8 @@ public class MyWebSocketHandler implements WebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession webSocketSession) throws Exception {
         Observer observer = new Observer(webSocketSession);
-        newsService.register(observer);
+//        newsService.register(observer);
+
     }
 
     @Override
@@ -46,7 +49,8 @@ public class MyWebSocketHandler implements WebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession webSocketSession, CloseStatus closeStatus) throws Exception {
-        newsService.unregister(webSocketSession);
+       // newsService.unregister(webSocketSession);
+        disposable = null;
     }
 
     @Override

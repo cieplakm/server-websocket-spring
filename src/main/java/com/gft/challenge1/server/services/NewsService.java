@@ -3,11 +3,8 @@ package com.gft.challenge1.server.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gft.challenge1.server.node.Node;
-import com.gft.challenge1.server.NodeFakeRepository;
-import com.gft.challenge1.server.DirectoryChangedEvent;
 import com.gft.challenge1.server.websockets.Observer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
 import java.io.IOException;
@@ -22,13 +19,14 @@ public class NewsService {
     private static final String EMPTY_JSON = "{}";
     private List<Observer> observers;
     private ObjectMapper objectMapper;
-    private NodeFakeRepository nodeRepository;
+
 
     @Autowired
-    public NewsService(NodeFakeRepository fakeRepository) {
-        this.nodeRepository = fakeRepository;
+    public NewsService() {
+
         this.observers = new ArrayList<>();
         this.objectMapper = new ObjectMapper();
+
 
 
 
@@ -43,7 +41,7 @@ public class NewsService {
     }
 
     public Stream<Message> prepareData(){
-        Iterator<Node<String>> nodeIterator = nodeRepository.getRoot().iterator();
+        Iterator<Node<String>> nodeIterator = null; //= nodeRepository.getRoot().iterator();
         Stream<Node<String>> nodeStream = convertIteratorToStream(nodeIterator);
         Stream<Message> messageStream = createMessageStream(nodeStream);
 
@@ -110,11 +108,6 @@ public class NewsService {
                 return;
             }
         }
-    }
-
-    @EventListener
-    public void onApplicationEvent(DirectoryChangedEvent directoryChangedEvent) {
-        sendWholeDataToAllObservers();
     }
 
 }
