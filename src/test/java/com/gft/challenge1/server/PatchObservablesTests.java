@@ -1,5 +1,6 @@
 package com.gft.challenge1.server;
 
+import com.gft.challenge1.server.node.PathObservables;
 import io.reactivex.Observable;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -11,18 +12,17 @@ import com.google.common.jimfs.Jimfs;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import static com.gft.challenge1.server.PathObservables.EventType.CREATED;
-import static com.gft.challenge1.server.PathObservables.EventType.DELETED;
+import static com.gft.challenge1.server.node.PathObservables.EventType.CREATED;
+import static com.gft.challenge1.server.node.PathObservables.EventType.DELETED;
 
 public class PatchObservablesTests {
     private Path tempDirectory;
     private Observable<PathObservables.Event> watcher;
-    private FileSystem fs;
 
     @Before
     @SneakyThrows
     public void setupTest(){
-        fs = Jimfs.newFileSystem(Configuration.windows());
+        FileSystem fs = Jimfs.newFileSystem(Configuration.windows());
         tempDirectory = fs.getPath("C:/temp");
         Files.createDirectory(tempDirectory);
 

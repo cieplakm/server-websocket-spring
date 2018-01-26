@@ -3,7 +3,7 @@ package com.gft.challenge1.server.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gft.challenge1.server.node.Node;
-import com.gft.challenge1.server.websockets.Observer;
+import com.gft.challenge1.server.websockets.WebSocketSubscriber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
@@ -17,14 +17,14 @@ import java.util.stream.StreamSupport;
 @Service
 public class NewsService {
     private static final String EMPTY_JSON = "{}";
-    private List<Observer> observers;
+    private List<WebSocketSubscriber> webSocketSubscribers;
     private ObjectMapper objectMapper;
 
 
     @Autowired
     public NewsService() {
 
-        this.observers = new ArrayList<>();
+        this.webSocketSubscribers = new ArrayList<>();
         this.objectMapper = new ObjectMapper();
 
 
@@ -36,8 +36,8 @@ public class NewsService {
         sendWholeDataToAllObservers(new Message("clear",null));
     }
 
-    private void informObserver(Observer observer, Message messageStream) {
-        sendMessage2Observer(observer, messageStream);
+    private void informObserver(WebSocketSubscriber webSocketSubscriber, Message messageStream) {
+        sendMessage2Observer(webSocketSubscriber, messageStream);
     }
 
     public Stream<Message> prepareData(){
@@ -53,9 +53,9 @@ public class NewsService {
         prepareData().forEach((this::sendWholeDataToAllObservers));
     }
 
-    private void sendDataToOneObserver(Observer observer){
+    private void sendDataToOneObserver(WebSocketSubscriber webSocketSubscriber){
         prepareData().forEach((message)->{
-            sendMessage2Observer(observer, message);
+            sendMessage2Observer(webSocketSubscriber, message);
         });
     }
 
@@ -64,15 +64,15 @@ public class NewsService {
     }
 
     private void sendWholeDataToAllObservers(Message messageStream) {
-        for (Observer observer : observers){
-            informObserver(observer, messageStream);
+        for (WebSocketSubscriber webSocketSubscriber : webSocketSubscribers){
+            informObserver(webSocketSubscriber, messageStream);
         }
     }
 
-    private void sendMessage2Observer(Observer observer, Message message){
+    private void sendMessage2Observer(WebSocketSubscriber webSocketSubscriber, Message message){
         String json = message2JSONString(message);
         try {
-            observer.sendJSON(json);
+            webSocketSubscriber.sendJSON(json);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -96,15 +96,15 @@ public class NewsService {
         return StreamSupport.stream(iterable.spliterator(), false);
     }
 
-    public void register(Observer observer){
-        observers.add(observer);
-        sendDataToOneObserver(observer);
+    public void register(WebSocketSubscriber webSocketSubscriber){
+        webSocketSubscribers.add(webSocketSubscriber);
+        sendDataToOneObserver(webSocketSubscriber);
     }
 
     public void unregister(WebSocketSession observerToRemove){
-        for (Observer obs : observers){
+        for (WebSocketSubscriber obs : webSocketSubscribers){
             if (obs.equals(observerToRemove)){
-                observers.remove(obs);
+                webSocketSubscribers.remove(obs);
                 return;
             }
         }

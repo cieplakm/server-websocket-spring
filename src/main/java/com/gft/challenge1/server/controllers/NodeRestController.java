@@ -9,17 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/admin")
 public class NodeRestController {
 
-    private XXX xxx;
-
     @Autowired
-    public NodeRestController(XXX xxx) {
-
-        this.xxx = xxx;
+    public NodeRestController() {
     }
 
     @RequestMapping(path = "/addFile")
     public String addNode(@RequestParam(value = "name") String path){
-        xxx.add();
         return "Node \"" + path + "\"created successfully. ";
     }
 

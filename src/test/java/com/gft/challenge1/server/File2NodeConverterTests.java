@@ -1,5 +1,6 @@
 package com.gft.challenge1.server;
 
+import com.gft.challenge1.server.node.File2NodeConverter;
 import com.gft.challenge1.server.node.Node;
 import org.junit.Test;
 

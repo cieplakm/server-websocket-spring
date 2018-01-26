@@ -1,4 +1,4 @@
-package com.gft.challenge1.server;
+package com.gft.challenge1.server.node;
 
 import com.gft.challenge1.server.node.Node;
 import com.gft.challenge1.server.node.NodeImpl;

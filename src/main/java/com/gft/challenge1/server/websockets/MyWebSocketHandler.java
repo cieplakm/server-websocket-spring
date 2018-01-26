@@ -1,38 +1,32 @@
 package com.gft.challenge1.server.websockets;
 
-import com.gft.challenge1.server.PathObservables;
-import com.gft.challenge1.server.services.NewsService;
-import com.google.common.jimfs.Configuration;
-import com.google.common.jimfs.Jimfs;
-import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
+import com.gft.challenge1.server.services.Subscription;
 import io.reactivex.functions.Consumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-
 @Component
 public class MyWebSocketHandler implements WebSocketHandler {
 
-    private NewsService newsService;
-    Observable<PathObservables.Event> observ;
-    Disposable disposable;
+    private Subscription subscription;
 
     @Autowired
-    public MyWebSocketHandler(NewsService newsService) {
-        this.newsService = newsService;
+    public MyWebSocketHandler(Subscription subscription) {
+        this.subscription = subscription;
     }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession webSocketSession) throws Exception {
-        Observer observer = new Observer(webSocketSession);
-//        newsService.register(observer);
+        subscription.newlyWebSubscriberObservable().subscribe(new Consumer<WebSocketSubscriber>() {
+            @Override
+            public void accept(WebSocketSubscriber webSocketSubscriber) throws Exception {
+                System.out.println("przed!");
+            }
+        });
+
+        subscription.subscribe(new WebSocketSubscriber(webSocketSession));
+
 
     }
 
@@ -49,8 +43,14 @@ public class MyWebSocketHandler implements WebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession webSocketSession, CloseStatus closeStatus) throws Exception {
-       // newsService.unregister(webSocketSession);
-        disposable = null;
+        subscription.newlyWebSubscriberObservable().replay().autoConnect().subscribe(new Consumer<WebSocketSubscriber>() {
+            @Override
+            public void accept(WebSocketSubscriber webSocketSubscriber) throws Exception {
+                System.out.println("OOOOOBY");
+            }
+        });
+
+       subscription.unsubscribe(new WebSocketSubscriber(webSocketSession));
     }
 
     @Override

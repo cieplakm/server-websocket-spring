@@ -1,4 +1,4 @@
-package com.gft.challenge1.server;
+package com.gft.challenge1.server.node;
 
 import com.sun.nio.file.SensitivityWatchEventModifier;
 import io.reactivex.Observable;
@@ -15,7 +15,7 @@ public class PathObservables {
         return new ObservableFactory(directoryToObserve).create();
     }
 
-    enum EventType {
+    public enum EventType {
         CREATED, UNKNOWN, DELETED
     }
 
@@ -46,14 +46,12 @@ public class PathObservables {
         private void registerPathWithWatchService() throws IOException {
                 dir2Watch.register(watchService,
                         new WatchEvent.Kind[]{StandardWatchEventKinds.ENTRY_CREATE,
-                                StandardWatchEventKinds.ENTRY_DELETE,
-                                StandardWatchEventKinds.ENTRY_MODIFY,
-                                StandardWatchEventKinds.OVERFLOW},
+                                StandardWatchEventKinds.ENTRY_DELETE},
                         SensitivityWatchEventModifier.HIGH);
         }
 
         private void startListening4Change(ObservableEmitter<Event> emitter) {
-            while(true){
+            while(!Thread.currentThread().isInterrupted()){
 
                 WatchKey key;
                 try {
@@ -61,9 +59,10 @@ public class PathObservables {
                     key = watchService.take();
                 } catch (InterruptedException e) {
                     emitter.onError(e);
+                    Thread.currentThread().interrupt();
                     break;
                 }
-
+                //emit every event
                 for (WatchEvent event : key.pollEvents()){
                     EventType eventType = getEventType(event);
                     emitter.onNext(new Event(eventType, dir2Watch.resolve((Path)event.context())));
@@ -72,7 +71,7 @@ public class PathObservables {
                 boolean valid = key.reset();
 
                 if (!valid) {
-                    return; // finish listening
+                    Thread.currentThread().interrupt();
                 }
             }
         }
