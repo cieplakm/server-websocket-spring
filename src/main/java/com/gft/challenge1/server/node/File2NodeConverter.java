@@ -1,25 +1,45 @@
 package com.gft.challenge1.server.node;
 
-import com.gft.challenge1.server.node.Node;
-import com.gft.challenge1.server.node.NodeImpl;
-
+import io.reactivex.Observable;
 import java.io.File;
-import java.util.Objects;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.stream.Collectors;
+
 
 public class File2NodeConverter {
-    public static Node<File> convertFile2Node(File file){
-        Node<File> root = new NodeImpl<>(file);
-        createTree(root);
-        return  root;
+
+    public static Observable<String> convertFile2Node(Path path){
+        Node root = new NodeImpl<>();
+
+        try {
+            createTree(root, path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Iterable iterable = SuperAlgorithm.convert2Iterable(root);
+        return Observable.fromIterable( iterable  );
     }
 
-    private static void createTree(Node<File> node){
-        for (File f : node.getPayload().listFiles()){
-            if (f.isDirectory()){
-                createTree(new NodeImpl<>(node, f));
-            }else {
-                new NodeImpl<>(node, f);
-            }
+    private static Node createTree(Node root, Path rootPath) throws IOException{
+        Node result = null;
+
+        for (Path path : Files.walk(rootPath).collect(Collectors.toList()) ){
+           result =  new NodeImpl<>(root, "Root");
+//            if (Files.isDirectory(path)){
+//                //directory
+//                Node dirNode = createTree(root);
+//                result = dirNode;
+//            }else{
+//                //file
+//                Node fileNode = new NodeImpl<>(root);
+//                result = fileNode;
+//            }
         }
+
+        return result;
     }
+
+
 }

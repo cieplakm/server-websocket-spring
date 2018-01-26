@@ -49,7 +49,6 @@ public class Subscription {
 
                     @Override
                     public void onSuccess(WebSocketSubscriber webSocketSubscriber) {
-
                         webSocketSubscribers.remove(webSocketSubscriber);
                     }
 

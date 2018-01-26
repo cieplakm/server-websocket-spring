@@ -17,18 +17,12 @@ import java.util.stream.StreamSupport;
 @Service
 public class NewsService {
     private static final String EMPTY_JSON = "{}";
-    private List<WebSocketSubscriber> webSocketSubscribers;
     private ObjectMapper objectMapper;
 
 
     @Autowired
     public NewsService() {
-
-        this.webSocketSubscribers = new ArrayList<>();
         this.objectMapper = new ObjectMapper();
-
-
-
 
     }
 
@@ -64,9 +58,9 @@ public class NewsService {
     }
 
     private void sendWholeDataToAllObservers(Message messageStream) {
-        for (WebSocketSubscriber webSocketSubscriber : webSocketSubscribers){
-            informObserver(webSocketSubscriber, messageStream);
-        }
+//        for (WebSocketSubscriber webSocketSubscriber : webSocketSubscribers){
+//            informObserver(webSocketSubscriber, messageStream);
+//        }
     }
 
     private void sendMessage2Observer(WebSocketSubscriber webSocketSubscriber, Message message){
@@ -96,18 +90,8 @@ public class NewsService {
         return StreamSupport.stream(iterable.spliterator(), false);
     }
 
-    public void register(WebSocketSubscriber webSocketSubscriber){
-        webSocketSubscribers.add(webSocketSubscriber);
-        sendDataToOneObserver(webSocketSubscriber);
-    }
 
-    public void unregister(WebSocketSession observerToRemove){
-        for (WebSocketSubscriber obs : webSocketSubscribers){
-            if (obs.equals(observerToRemove)){
-                webSocketSubscribers.remove(obs);
-                return;
-            }
-        }
-    }
+
+
 
 }
