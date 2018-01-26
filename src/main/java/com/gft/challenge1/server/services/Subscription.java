@@ -4,7 +4,6 @@ import com.gft.challenge1.server.websockets.WebSocketSubscriber;
 import io.reactivex.Observable;
 import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
 import org.springframework.stereotype.Component;
 import java.util.HashSet;
