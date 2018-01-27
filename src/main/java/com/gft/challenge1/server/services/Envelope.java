@@ -4,9 +4,8 @@ import com.gft.challenge1.server.websockets.WebSocketSubscriber;
 import lombok.Data;
 import lombok.Value;
 
-
 @Value
 public class Envelope {
-    WebSocketSubscriber webSocketSubscriber;
-    String data;
+    private WebSocketSubscriber webSocketSubscriber;
+    private String data;
 }

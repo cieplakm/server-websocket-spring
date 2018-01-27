@@ -1,6 +1,7 @@
 package com.gft.challenge1.server.services;
 
 public class Message<T> {
+
     private String order;
     private T data;
 

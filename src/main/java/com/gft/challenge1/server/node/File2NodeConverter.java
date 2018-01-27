@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class File2NodeConverter {
 
-    public static Observable<String> convertFile2Node(Path path){
+    public static Observable<String> path2NodeObservable(Path path){
         Node root = new NodeImpl<>();
 
         try {
@@ -18,6 +18,7 @@ public class File2NodeConverter {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         Iterable iterable = SuperAlgorithm.convert2Iterable(root);
         return Observable.fromIterable( iterable  );
     }
@@ -26,7 +27,7 @@ public class File2NodeConverter {
         Node result = null;
 
         for (Path path : Files.walk(rootPath).collect(Collectors.toList()) ){
-           result =  new NodeImpl<>(root, "Root");
+           result =  new NodeImpl<>(root, "file" + path.toString());
 //            if (Files.isDirectory(path)){
 //                //directory
 //                Node dirNode = createTree(root);
