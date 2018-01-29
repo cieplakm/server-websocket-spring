@@ -12,3 +12,4 @@ public interface Node<T> extends Iterable<Node<T>> {
     T getPayload();
 
 }
+

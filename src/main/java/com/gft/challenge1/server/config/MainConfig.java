@@ -19,20 +19,7 @@ public class MainConfig {
     @Bean
     Path myPath(){
         FileSystem fs = FileSystems.getDefault();//Jimfs.newFileSystem(com.google.common.jimfs.Configuration.windows());
-        Path tempDirectory = fs.getPath("C:/temp");
-//        try {
-//            Files.createDirectory(tempDirectory);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        for (int i = 0; i < 10; i++){
-//            Path rePath = tempDirectory.resolve("temp"+i);
-//            try {
-//                Files.createDirectory(rePath);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
+        Path tempDirectory = fs.getPath("C:\\temp");
 
         return tempDirectory;
     }

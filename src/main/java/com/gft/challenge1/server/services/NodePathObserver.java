@@ -1,14 +1,10 @@
 package com.gft.challenge1.server.services;
 
-import com.gft.challenge1.server.node.File2NodeConverter;
-import com.gft.challenge1.server.node.PathObservables;
+import com.gft.challenge1.server.node.Path2NodeConverter;
+import com.gft.challenge1.server.path.PathObservables;
 import com.gft.challenge1.server.websockets.WebSocketSubscriber;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.BiFunction;
-import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,19 +12,14 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.nio.file.Path;
 
-
-/**This class is for create Observable which will be
- * creating Node from path and Watch service from path.*/
 @Component
-public class NodeXYZ {
+public class NodePathObserver {
 
-    public Path all4ThisDirectory;
     private Subscription subscription;
     private PostOfficeService postOfficeService;
 
     @Autowired
-    public NodeXYZ(Path myPath, Subscription subscription, PostOfficeService postOfficeService) {
-        this.all4ThisDirectory = myPath;
+    public NodePathObserver(Path myPath, Subscription subscription, PostOfficeService postOfficeService) {
         this.subscription = subscription;
         this.postOfficeService = postOfficeService;
 
@@ -39,33 +30,32 @@ public class NodeXYZ {
         }
     }
 
-    public void createNodeFromPath(Path path) throws IOException {
+    private void createNodeFromPath(Path path) throws IOException {
 
-        File2NodeConverter.ConvertFunction<String> convertFunction = path1 -> path1.toString();
-        Observable<String> nodeObservable = File2NodeConverter.path2NodeObservable(path, convertFunction);
-        Observable<PathObservables.Event> pathObservable = PathObservables.watch(path);
+        Path2NodeConverter.ConvertFunction<String> convertFunction = Path::toString;
+
+
         Observable<WebSocketSubscriber> newlySubscriberObservable = subscription.newlyWebSubscriberObservable();
         Observable<WebSocketSubscriber> allSubscribersObservable = subscription.subscribers();
 
 
         Observable <Envelope> clientConnectObservable = newlySubscriberObservable
                 .flatMap((Function<WebSocketSubscriber, ObservableSource<Envelope>>) webSocketSubscriber ->
-                        nodeObservable.map(s -> new Envelope(webSocketSubscriber, s)));
+                        Path2NodeConverter.path2NodeObservable(path, convertFunction).map(s -> new Envelope(webSocketSubscriber, s)));
 
 
 
-        Observable <Envelope> folderCangedObservable = pathObservable.flatMap((Function<PathObservables.Event, ObservableSource<Envelope>>) event -> {
-            Observable<String> v = Observable.merge(File2NodeConverter.path2NodeObservable(path, convertFunction), nodeObservable);
+        Observable <Envelope> folderCangedObservable = PathObservables.watch(path)
+                .flatMap((Function<PathObservables.Event, ObservableSource<Envelope>>) event -> {
+            Observable<String> v = Observable.merge(Path2NodeConverter.path2NodeObservable(path, convertFunction), Path2NodeConverter.path2NodeObservable(path, convertFunction));
             return v.flatMap((Function<String, ObservableSource<Envelope>>) s ->
                     allSubscribersObservable.map(webSocketSubscriber -> new Envelope(webSocketSubscriber, s))) ;
         });
 
 
 
-
         clientConnectObservable.subscribe(postOfficeService::sendAsJSON);
         folderCangedObservable.subscribe((postOfficeService::sendAsJSON));
-
 
     }
 }

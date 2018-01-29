@@ -1,4 +1,4 @@
-package com.gft.challenge1.server.node;
+package com.gft.challenge1.server.path;
 
 import com.sun.nio.file.SensitivityWatchEventModifier;
 import io.reactivex.Observable;

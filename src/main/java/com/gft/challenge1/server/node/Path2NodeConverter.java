@@ -7,17 +7,17 @@ import java.nio.file.Path;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public final class File2NodeConverter {
+public final class Path2NodeConverter {
 
     public static <T> Observable<T> path2NodeObservable(Path path, ConvertFunction<T> convertFunction) throws IOException{
-        return new NodeFactory<>(path, convertFunction).create();
+        return new NodeObservableFactory<>(path, convertFunction).create();
     }
 
-    private static class NodeFactory<T>{
+    private static class NodeObservableFactory<T>{
         private Path rootPath;
         private ConvertFunction<T> convertFunction;
 
-        private NodeFactory(Path rootPath, ConvertFunction<T> convertFunction) {
+        private NodeObservableFactory(Path rootPath, ConvertFunction<T> convertFunction) {
             this.rootPath = rootPath;
             this.convertFunction = convertFunction;
         }

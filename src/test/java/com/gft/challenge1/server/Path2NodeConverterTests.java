@@ -1,8 +1,7 @@
 package com.gft.challenge1.server;
 
-import com.gft.challenge1.server.node.File2NodeConverter;
+import com.gft.challenge1.server.node.Path2NodeConverter;
 import com.google.common.jimfs.Configuration;
-import com.google.common.jimfs.File;
 import com.google.common.jimfs.Jimfs;
 import io.reactivex.Observable;
 import lombok.SneakyThrows;
@@ -14,9 +13,9 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class File2NodeConverterTests {
+public class Path2NodeConverterTests {
 
-    File2NodeConverter.ConvertFunction<String> convertFunction;
+    Path2NodeConverter.ConvertFunction<String> convertFunction;
 
 
     @Before
@@ -34,7 +33,7 @@ public class File2NodeConverterTests {
         Files.createDirectory(tempDirectory);
         Files.createDirectory(newFolder);
 
-        Observable nodeStream = File2NodeConverter.path2NodeObservable(tempDirectory, convertFunction);
+        Observable nodeStream = Path2NodeConverter.path2NodeObservable(tempDirectory, convertFunction);
         Iterable itreable = nodeStream.blockingIterable();
         Assertions.assertThat(itreable).containsOnly("C:\\temp\\New Folder");
     }
@@ -51,7 +50,7 @@ public class File2NodeConverterTests {
         Files.createDirectory(newFolder);
         Files.write(file, new byte[1]);
 
-        Observable nodeStream = File2NodeConverter.path2NodeObservable(tempDirectory, convertFunction);
+        Observable nodeStream = Path2NodeConverter.path2NodeObservable(tempDirectory, convertFunction);
         Iterable<String> itreable = nodeStream.blockingIterable();
         Assertions.assertThat(itreable).containsOnly("C:\\temp\\New Folder", "C:\\temp\\file.txt");
     }
@@ -68,8 +67,12 @@ public class File2NodeConverterTests {
         Files.createDirectory(newFolder);
         Files.write(file, new byte[1]);
 
-        Observable nodeStream = File2NodeConverter.path2NodeObservable(tempDirectory, convertFunction);
+        Observable nodeStream = Path2NodeConverter.path2NodeObservable(tempDirectory, convertFunction);
         Iterable itreable = nodeStream.blockingIterable();
         Assertions.assertThat(itreable).containsOnly("C:\\temp\\New Folder", "C:\\temp\\New Folder\\file.txt");
     }
+
+
+
+
 }
