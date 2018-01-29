@@ -40,7 +40,9 @@ public class NodeXYZ {
     }
 
     public void createNodeFromPath(Path path) throws IOException {
-        Observable<String> nodeObservable = File2NodeConverter.path2NodeObservable(path);
+
+        File2NodeConverter.ConvertFunction<String> convertFunction = path1 -> path1.toString();
+        Observable<String> nodeObservable = File2NodeConverter.path2NodeObservable(path, convertFunction);
         Observable<PathObservables.Event> pathObservable = PathObservables.watch(path);
         Observable<WebSocketSubscriber> newlySubscriberObservable = subscription.newlyWebSubscriberObservable();
         Observable<WebSocketSubscriber> allSubscribersObservable = subscription.subscribers();
@@ -53,7 +55,7 @@ public class NodeXYZ {
 
 
         Observable <Envelope> folderCangedObservable = pathObservable.flatMap((Function<PathObservables.Event, ObservableSource<Envelope>>) event -> {
-            Observable<String> v = Observable.merge(File2NodeConverter.path2NodeObservable(path), nodeObservable);
+            Observable<String> v = Observable.merge(File2NodeConverter.path2NodeObservable(path, convertFunction), nodeObservable);
             return v.flatMap((Function<String, ObservableSource<Envelope>>) s ->
                     allSubscribersObservable.map(webSocketSubscriber -> new Envelope(webSocketSubscriber, s))) ;
         });
