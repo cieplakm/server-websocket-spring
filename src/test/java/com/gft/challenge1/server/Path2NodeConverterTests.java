@@ -1,6 +1,6 @@
 package com.gft.challenge1.server;
 
-import com.gft.challenge1.server.node.Path2NodeConverter;
+import com.gft.challenge1.server.node.Nodes;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 import io.reactivex.Observable;
@@ -15,7 +15,7 @@ import java.nio.file.Path;
 
 public class Path2NodeConverterTests {
 
-    Path2NodeConverter.ConvertFunction<String> convertFunction;
+    Nodes.ConvertFunction<String> convertFunction;
 
 
     @Before
@@ -33,7 +33,7 @@ public class Path2NodeConverterTests {
         Files.createDirectory(tempDirectory);
         Files.createDirectory(newFolder);
 
-        Observable nodeStream = Path2NodeConverter.path2NodeObservable(tempDirectory, convertFunction);
+        Observable nodeStream = Nodes.path2NodeObservable(tempDirectory, convertFunction);
         Iterable itreable = nodeStream.blockingIterable();
         Assertions.assertThat(itreable).containsOnly("C:\\temp\\New Folder");
     }
@@ -50,7 +50,7 @@ public class Path2NodeConverterTests {
         Files.createDirectory(newFolder);
         Files.write(file, new byte[1]);
 
-        Observable nodeStream = Path2NodeConverter.path2NodeObservable(tempDirectory, convertFunction);
+        Observable nodeStream = Nodes.path2NodeObservable(tempDirectory, convertFunction);
         Iterable<String> itreable = nodeStream.blockingIterable();
         Assertions.assertThat(itreable).containsOnly("C:\\temp\\New Folder", "C:\\temp\\file.txt");
     }
@@ -67,7 +67,7 @@ public class Path2NodeConverterTests {
         Files.createDirectory(newFolder);
         Files.write(file, new byte[1]);
 
-        Observable nodeStream = Path2NodeConverter.path2NodeObservable(tempDirectory, convertFunction);
+        Observable nodeStream = Nodes.path2NodeObservable(tempDirectory, convertFunction);
         Iterable itreable = nodeStream.blockingIterable();
         Assertions.assertThat(itreable).containsOnly("C:\\temp\\New Folder", "C:\\temp\\New Folder\\file.txt");
     }

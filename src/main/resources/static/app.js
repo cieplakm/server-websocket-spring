@@ -13,7 +13,7 @@ function setConnected(connected) {
 }
 
 function connect() {
-    socket = new WebSocket('ws://localhost:8080/name_of_handler');
+    socket = new WebSocket('ws://192.168.99.100:8080/name_of_handler');
     socket.addEventListener('open', function (event) {
         console.log("Connected!");
         socket.send('Hello Server!');

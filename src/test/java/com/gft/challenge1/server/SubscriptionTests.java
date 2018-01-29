@@ -1,6 +1,6 @@
 package com.gft.challenge1.server;
 
-import com.gft.challenge1.server.services.Subscription;
+import com.gft.challenge1.server.websockets.Subscription;
 import com.gft.challenge1.server.websockets.WebSocketSubscriber;
 import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;

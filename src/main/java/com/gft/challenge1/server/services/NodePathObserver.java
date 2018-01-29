@@ -1,6 +1,7 @@
 package com.gft.challenge1.server.services;
 
-import com.gft.challenge1.server.node.Path2NodeConverter;
+import com.gft.challenge1.server.websockets.Subscription;
+import com.gft.challenge1.server.node.Nodes;
 import com.gft.challenge1.server.path.PathObservables;
 import com.gft.challenge1.server.websockets.WebSocketSubscriber;
 import io.reactivex.Observable;
@@ -32,7 +33,7 @@ public class NodePathObserver {
 
     private void createNodeFromPath(Path path) throws IOException {
 
-        Path2NodeConverter.ConvertFunction<String> convertFunction = Path::toString;
+        Nodes.ConvertFunction<String> convertFunction = Path::toString;
 
 
         Observable<WebSocketSubscriber> newlySubscriberObservable = subscription.newlyWebSubscriberObservable();
@@ -41,13 +42,13 @@ public class NodePathObserver {
 
         Observable <Envelope> clientConnectObservable = newlySubscriberObservable
                 .flatMap((Function<WebSocketSubscriber, ObservableSource<Envelope>>) webSocketSubscriber ->
-                        Path2NodeConverter.path2NodeObservable(path, convertFunction).map(s -> new Envelope(webSocketSubscriber, s)));
+                        Nodes.path2NodeObservable(path, convertFunction).map(s -> new Envelope(webSocketSubscriber, s)));
 
 
 
         Observable <Envelope> folderCangedObservable = PathObservables.watch(path)
                 .flatMap((Function<PathObservables.Event, ObservableSource<Envelope>>) event -> {
-            Observable<String> v = Observable.merge(Path2NodeConverter.path2NodeObservable(path, convertFunction), Path2NodeConverter.path2NodeObservable(path, convertFunction));
+            Observable<String> v = Observable.merge(Nodes.path2NodeObservable(path, convertFunction), Nodes.path2NodeObservable(path, convertFunction));
             return v.flatMap((Function<String, ObservableSource<Envelope>>) s ->
                     allSubscribersObservable.map(webSocketSubscriber -> new Envelope(webSocketSubscriber, s))) ;
         });

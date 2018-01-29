@@ -12,6 +12,7 @@ import com.google.common.jimfs.Jimfs;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
 import static com.gft.challenge1.server.path.PathObservables.EventType.CREATED;
 import static com.gft.challenge1.server.path.PathObservables.EventType.DELETED;
 
@@ -71,7 +72,6 @@ public class PatchObservablesTests {
         Files.createDirectory(superDir);
         val createExpected =  watcher.blockingFirst();
         Assertions.assertThat(createExpected.getSubject()).isEqualTo(superDir);
-
     }
 
 }

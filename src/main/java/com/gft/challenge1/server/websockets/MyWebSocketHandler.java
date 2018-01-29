@@ -1,6 +1,5 @@
 package com.gft.challenge1.server.websockets;
 
-import com.gft.challenge1.server.services.Subscription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;

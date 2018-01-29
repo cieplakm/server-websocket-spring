@@ -1,6 +1,4 @@
-package com.gft.challenge1.server.services;
-
-import com.gft.challenge1.server.websockets.WebSocketSubscriber;
+package com.gft.challenge1.server.websockets;
 import io.reactivex.Observable;
 import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
