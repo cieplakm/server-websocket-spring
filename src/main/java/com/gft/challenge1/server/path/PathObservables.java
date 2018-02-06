@@ -25,7 +25,7 @@ public class PathObservables {
         private Path subject;
     }
 
-    private static class ObservableFactory {
+    private static class ObservableFactory{
 
         private WatchService watchService;
         private Path dir2Watch;
@@ -62,6 +62,7 @@ public class PathObservables {
                     Thread.currentThread().interrupt();
                     break;
                 }
+
                 //emit every event
                 for (WatchEvent event : key.pollEvents()){
                     EventType eventType = getEventType(event);

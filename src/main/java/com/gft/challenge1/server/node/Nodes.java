@@ -67,25 +67,24 @@ public final class Nodes {
             return Observable.fromIterable(iterable);
         }
 
-        private Node<T> createTree(Node<T> root, Path rootPath) throws IOException{
-            Node<T> result = null;
-
-            Stream<Path> filesStream = Files.walk(rootPath).filter(path -> {
+        private void createTree(Node<T> root, Path rootPath) throws IOException{
+            //go through only root dir no deeper -> max depth = 1
+            Stream<Path> filesStream = Files.walk(rootPath, 1).filter(path -> {
                 //every files except root dir
                 return !path.toString().equals(rootPath.toString());
             });
 
+
             for (Path path : filesStream.collect(Collectors.toList()) ){
                 if (Files.isDirectory(path)){
                     //directory
-                    result = createTree(new NodeImpl<>(root, convertFunction.getData(path) ), path);
+                    new NodeImpl<>(root, convertFunction.getData(path) );
                 }else{
                     //file
-                    result = new NodeImpl<>(root, convertFunction.getData(path) );
+                    new NodeImpl<>(root, convertFunction.getData(path) );
                 }
             }
 
-            return result;
         }
     }
 }

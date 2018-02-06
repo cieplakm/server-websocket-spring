@@ -4,7 +4,7 @@ import com.gft.challenge1.server.websockets.WebSocketSubscriber;
 import lombok.Value;
 
 @Value
-public class Envelope {
+public class Envelope<T> {
     private WebSocketSubscriber webSocketSubscriber;
-    private String data;
+    private T data;
 }

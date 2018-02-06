@@ -7,10 +7,8 @@ import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.FileSystem;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import java.nio.file.*;
 
 public class PathCreatorTests {
 
@@ -73,5 +71,48 @@ public class PathCreatorTests {
                 .assertThatThrownBy(()->PathCreator.create(tempDirectory, "deep"))
                 .isInstanceOf(FileAlreadyExistsException.class);
     }
+
+    @Test
+    @SneakyThrows
+    public void shouldCreateDirInsideExistingSubFolderOfRoot(){
+        Path deepNestedFile = tempDirectory.resolve("deep");
+        Files.createDirectory(deepNestedFile);
+
+        Path deeperNestedFile = tempDirectory.resolve("deep\\deeper");
+        Path moreDeeperNestedFile = tempDirectory.resolve("deep\\deeper\\more_deeper");
+
+
+        Assertions.assertThat(Files.exists(deeperNestedFile)).isEqualTo(false);
+        Assertions.assertThat(Files.exists(moreDeeperNestedFile)).isEqualTo(false);
+
+        PathCreator.create(tempDirectory, "deep/deeper/more_deeper/file.txt");
+
+        Assertions.assertThat((Files.exists(moreDeeperNestedFile))).isEqualTo(true);
+        Assertions.assertThat((Files.exists(deeperNestedFile))).isEqualTo(true);
+    }
+
+    @Test
+    @SneakyThrows
+    public void shouldCreateDirInsideExistingSubFolderOfRootForUnix(){
+        FileSystem fs = Jimfs.newFileSystem(com.google.common.jimfs.Configuration.unix());
+        Path tempDirectory =  fs.getPath("/temp");
+        Files.createDirectory(tempDirectory);
+
+        Path deepNestedFile = tempDirectory.resolve("deep");
+        Files.createDirectory(deepNestedFile);
+
+        Path deeperNestedFile = tempDirectory.resolve("deep/deeper");
+        Path moreDeeperNestedFile = tempDirectory.resolve("deep/deeper/more_deeper");
+
+
+        Assertions.assertThat(Files.exists(deeperNestedFile)).isEqualTo(false);
+        Assertions.assertThat(Files.exists(moreDeeperNestedFile)).isEqualTo(false);
+
+        PathCreator.create(tempDirectory, "deep/deeper/more_deeper/file.txt");
+
+        Assertions.assertThat((Files.exists(moreDeeperNestedFile))).isEqualTo(true);
+        Assertions.assertThat((Files.exists(deeperNestedFile))).isEqualTo(true);
+    }
+
 
 }

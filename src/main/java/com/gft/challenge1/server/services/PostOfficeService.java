@@ -16,8 +16,8 @@ public class PostOfficeService {
         this.objectMapper = new ObjectMapper();
     }
 
-    public void sendAsJSON(Envelope envelope){
-        Message message = new Message("update", envelope.getData());
+    public <T> void sendAsJSON(Envelope<T> envelope){
+        Message<T> message = new Message<>(envelope.getData());
 
         try {
             envelope.getWebSocketSubscriber().sendJSON(message2JSONString(message));

@@ -2,6 +2,8 @@ package com.gft.challenge1.server.controllers;
 
 import com.gft.challenge1.server.path.PathCreator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,21 +23,15 @@ public class NodeRestController {
     }
 
     @RequestMapping(path = "/addFile")
-    public String addNode(@RequestParam(value = "name") String name)  {
+    public ResponseEntity<String> addNode(@RequestParam(value = "name") String name)  {
         try {
             PathCreator.create(mypath, name);
         } catch (IOException e) {
             if (e instanceof FileAlreadyExistsException){
-                return "Node \"" + name + "\"aleady exist. Node did not created.";
+                return new ResponseEntity<>("Node \"" + name + "\"aleady exist. Node did not created.", HttpStatus.FORBIDDEN);
             }
         }
-
-        return "Node \"" + name + "\"created successfully. ";
-    }
-
-    @RequestMapping(path = "/delete")
-    public String delNode(@RequestParam(value = "name") String name){
-        return "Node \"" + name + "\"deleted successfully.";
+        return new ResponseEntity<>("Node \"" + name + "\"created successfully. ", HttpStatus.FORBIDDEN);
     }
 
 }

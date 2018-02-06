@@ -55,7 +55,7 @@ public class Path2NodeConverterTests {
         Assertions.assertThat(itreable).containsOnly("C:\\temp\\New Folder", "C:\\temp\\file.txt");
     }
 
-    @Test
+/*    @Test
     @SneakyThrows
     public void subFolderOfTempShouldHaveAFile(){
         FileSystem fs = Jimfs.newFileSystem(Configuration.windows());
@@ -70,7 +70,7 @@ public class Path2NodeConverterTests {
         Observable nodeStream = Nodes.path2NodeObservable(tempDirectory, convertFunction);
         Iterable itreable = nodeStream.blockingIterable();
         Assertions.assertThat(itreable).containsOnly("C:\\temp\\New Folder", "C:\\temp\\New Folder\\file.txt");
-    }
+    }*/
 
 
 
