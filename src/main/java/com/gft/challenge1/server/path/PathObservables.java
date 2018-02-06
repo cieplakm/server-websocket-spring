@@ -2,17 +2,65 @@ package com.gft.challenge1.server.path;
 
 import com.sun.nio.file.SensitivityWatchEventModifier;
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.subjects.PublishSubject;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.nio.file.*;
 
-public class PathObservables {
+/**This class is to observe path changes.
+ * Single thread is created when you instance.
+ * Thread is staring when instance is created.
+ * This class IS-A Disposable.
+ *
+ */
+public final class PathObservables implements Disposable {
 
-    public static Observable<Event> watch(@NotNull Path directoryToObserve) throws IOException {
-        return new ObservableFactory(directoryToObserve).create();
+    private WatchService watchService;
+    private PublishSubject<Event> pathObservable;
+    private PathChangesObserverThread pathChangesObserverThread;
+    private boolean isDisposed;
+
+
+    public PathObservables(@NotNull Path directoryToObserve) throws IOException {
+        pathObservable = PublishSubject.create();
+        pathChangesObserverThread = new PathChangesObserverThread(directoryToObserve);
+        watchService = createWatchServiceRegisteredTo(directoryToObserve);
+        isDisposed = false;
+        //cold observer
+        pathChangesObserverThread.start();
+    }
+
+    public Observable<Event> observable(){
+        return pathObservable;
+    }
+
+    private WatchService createWatchServiceRegisteredTo(Path path) throws IOException {
+        FileSystem fs = path.getFileSystem();
+        WatchService watchService = fs.newWatchService();
+
+        path.register(watchService,
+                new WatchEvent.Kind[]{StandardWatchEventKinds.ENTRY_CREATE,
+                        StandardWatchEventKinds.ENTRY_DELETE},
+                SensitivityWatchEventModifier.HIGH);
+
+        return watchService;
+    }
+
+    @Override
+    public void dispose() {
+        if (!isDisposed){
+            isDisposed = true;
+            pathChangesObserverThread.interrupt();
+            pathObservable.onComplete();
+        }
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return isDisposed ;
     }
 
     public enum EventType {
@@ -25,48 +73,36 @@ public class PathObservables {
         private Path subject;
     }
 
-    private static class ObservableFactory{
+    private class PathChangesObserverThread extends Thread {
 
-        private WatchService watchService;
-        private Path dir2Watch;
+        private Path directoryToObserve;
 
-        private ObservableFactory(Path dir2Watch) throws IOException{
-            this.dir2Watch = dir2Watch;
-            FileSystem fs = dir2Watch.getFileSystem();
-            watchService = fs.newWatchService();
-            registerPathWithWatchService();
+        private PathChangesObserverThread(@NotNull Path directoryToObserve) {
+            this.directoryToObserve = directoryToObserve;
         }
 
-        private Observable<Event> create(){
-            return Observable
-                    .create(this::startListening4Change)
-                    .subscribeOn(Schedulers.computation());
-        }
-
-        private void registerPathWithWatchService() throws IOException {
-                dir2Watch.register(watchService,
-                        new WatchEvent.Kind[]{StandardWatchEventKinds.ENTRY_CREATE,
-                                StandardWatchEventKinds.ENTRY_DELETE},
-                        SensitivityWatchEventModifier.HIGH);
-        }
-
-        private void startListening4Change(ObservableEmitter<Event> emitter) {
-            while(!Thread.currentThread().isInterrupted()){
-
-                WatchKey key;
-                try {
-                    //waiting for key
-                    key = watchService.take();
-                } catch (InterruptedException e) {
-                    emitter.onError(e);
-                    Thread.currentThread().interrupt();
-                    break;
+        @Override
+        public void run() {
+            super.run();
+            try {
+                startListening4Change();
+            } catch (InterruptedException e) {
+                if (!isDisposed){
+                    isDisposed = true;
+                    pathObservable.onError(e);
                 }
+            }
+        }
+
+        private void startListening4Change() throws InterruptedException{
+            while(!PathChangesObserverThread.this.isInterrupted()){
+                //waiting for key
+                WatchKey key = watchService.take();
 
                 //emit every event
                 for (WatchEvent event : key.pollEvents()){
                     EventType eventType = getEventType(event);
-                    emitter.onNext(new Event(eventType, dir2Watch.resolve((Path)event.context())));
+                    pathObservable.onNext(new Event(eventType, directoryToObserve.resolve((Path)event.context())));
                 }
 
                 boolean valid = key.reset();
@@ -77,7 +113,7 @@ public class PathObservables {
             }
         }
 
-        private static EventType getEventType(WatchEvent event) {
+        private EventType getEventType(WatchEvent event) {
             if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE){
                 return EventType.CREATED;
             }else if (event.kind() == StandardWatchEventKinds.ENTRY_DELETE){
