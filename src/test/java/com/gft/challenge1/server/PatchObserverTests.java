@@ -3,6 +3,7 @@ package com.gft.challenge1.server;
 import com.gft.challenge1.server.path.PathObservables;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
+import com.google.common.jimfs.WatchServiceConfiguration;
 import io.reactivex.Observable;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -14,6 +15,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.NoSuchElementException;
+import java.util.concurrent.TimeUnit;
 
 import static com.gft.challenge1.server.path.PathObservables.EventType.CREATED;
 import static com.gft.challenge1.server.path.PathObservables.EventType.DELETED;
@@ -26,7 +28,9 @@ public class PatchObserverTests {
     @Before
     @SneakyThrows
     public void setupTest(){
-        FileSystem fs = Jimfs.newFileSystem(Configuration.windows());
+        Configuration configuration = Configuration.windows().toBuilder().setWatchServiceConfiguration(WatchServiceConfiguration.polling(1, TimeUnit.MICROSECONDS)).build();
+
+        FileSystem fs = Jimfs.newFileSystem(configuration);
         tempDirectory = fs.getPath("C:/temp");
         Files.createDirectory(tempDirectory);
 

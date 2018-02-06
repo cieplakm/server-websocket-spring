@@ -3,12 +3,14 @@ package com.gft.challenge1.server;
 import com.gft.challenge1.server.path.PathCreator;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
+import com.google.common.jimfs.WatchServiceConfiguration;
 import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.nio.file.*;
+import java.util.concurrent.TimeUnit;
 
 public class PathCreatorTests {
 
@@ -17,7 +19,10 @@ public class PathCreatorTests {
     @Before
     @SneakyThrows
     public void setup(){
-        FileSystem fs = Jimfs.newFileSystem(Configuration.windows());
+
+
+        Configuration configuration = Configuration.windows().toBuilder().setWatchServiceConfiguration(WatchServiceConfiguration.polling(1, TimeUnit.MICROSECONDS)).build();
+        FileSystem fs = Jimfs.newFileSystem(configuration);
         tempDirectory = fs.getPath("C:\\temp");
         Files.createDirectory(tempDirectory);
     }
