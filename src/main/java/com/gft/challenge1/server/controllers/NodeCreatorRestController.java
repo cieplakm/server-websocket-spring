@@ -13,12 +13,12 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Path;
 
 @RestController
-public class NodeRestController {
+public class NodeCreatorRestController {
 
     private Path mypath;
 
     @Autowired
-    public NodeRestController(Path mypath) {
+    public NodeCreatorRestController(Path mypath) {
         this.mypath = mypath;
     }
 
@@ -31,7 +31,7 @@ public class NodeRestController {
                 return new ResponseEntity<>("Node \"" + name + "\"aleady exist. Node did not created.", HttpStatus.FORBIDDEN);
             }
         }
-        return new ResponseEntity<>("Node \"" + name + "\"created successfully. ", HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>("Node \"" + name + "\"created successfully. ", HttpStatus.CREATED);
     }
 
 }

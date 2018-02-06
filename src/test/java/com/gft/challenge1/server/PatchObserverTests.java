@@ -18,7 +18,7 @@ import java.util.NoSuchElementException;
 import static com.gft.challenge1.server.path.PathObservables.EventType.CREATED;
 import static com.gft.challenge1.server.path.PathObservables.EventType.DELETED;
 
-public class PatchObservablesTests {
+public class PatchObserverTests {
     private Path tempDirectory;
     private Observable<PathObservables.Event> watcher;
     private PathObservables pathObservables;
